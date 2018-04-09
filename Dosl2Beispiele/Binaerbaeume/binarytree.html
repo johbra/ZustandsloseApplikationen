@@ -1,0 +1,472 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="de" xml:lang="de">
+<head>
+<!-- 2016-07-07 Thu 10:52 -->
+<meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta  name="viewport" content="width=device-width, initial-scale=1" />
+<title>Binärbäume in Clojure-DOSL</title>
+<meta  name="generator" content="Org-mode" />
+<meta  name="author" content="Johannes Brauer" />
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  .title  { text-align: center;
+             margin-bottom: .2em; }
+  .subtitle { text-align: center;
+              font-size: medium;
+              font-weight: bold;
+              margin-top:0; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { font-family: monospace; color: green; }
+  .priority { font-family: monospace; color: orange; }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #ccc;
+    box-shadow: 3px 3px 3px #eee;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: visible;
+    padding-top: 1.2em;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    background-color: white;
+    top: -10px;
+    right: 10px;
+    padding: 3px;
+    border: 1px solid black;
+  }
+  pre.src:hover:before { display: inline;}
+  pre.src-sh:before    { content: 'sh'; }
+  pre.src-bash:before  { content: 'sh'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-R:before     { content: 'R'; }
+  pre.src-perl:before  { content: 'Perl'; }
+  pre.src-java:before  { content: 'Java'; }
+  pre.src-sql:before   { content: 'SQL'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.org-right  { text-align: center;  }
+  th.org-left   { text-align: center;   }
+  th.org-center { text-align: center; }
+  td.org-right  { text-align: right;  }
+  td.org-left   { text-align: left;   }
+  td.org-center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara { display: inline; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  /*]]>*/-->
+</style>
+<link rel="stylesheet" type="text/css" href="http://www.pirilampo.org/styles/bigblow/css/htmlize.css"/>
+<link rel="stylesheet" type="text/css" href="http://www.pirilampo.org/styles/bigblow/css/bigblow.css"/>
+<link rel="stylesheet" type="text/css" href="http://www.pirilampo.org/styles/bigblow/css/hideshow.css"/>
+<script type="text/javascript" src="http://www.pirilampo.org/styles/bigblow/js/jquery-1.11.0.min.js"></script>
+<script type="text/javascript" src="http://www.pirilampo.org/styles/bigblow/js/jquery-ui-1.10.2.min.js"></script>
+<script type="text/javascript" src="http://www.pirilampo.org/styles/bigblow/js/jquery.localscroll-min.js"></script>
+<script type="text/javascript" src="http://www.pirilampo.org/styles/bigblow/js/jquery.scrollTo-1.4.3.1-min.js"></script>
+<script type="text/javascript" src="http://www.pirilampo.org/styles/bigblow/js/jquery.zclip.min.js"></script>
+<script type="text/javascript" src="http://www.pirilampo.org/styles/bigblow/js/bigblow.js"></script>
+<script type="text/javascript" src="http://www.pirilampo.org/styles/bigblow/js/hideshow.js"></script>
+<script type="text/javascript" src="http://www.pirilampo.org/styles/lib/js/jquery.stickytableheaders.min.js"></script>
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2013 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+</head>
+<body>
+<div id="content">
+<h1 class="title">Binärbäume in Clojure-DOSL</h1>
+<div id="table-of-contents">
+<h2>Inhaltsverzeichnis</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#orgheadline1">1. Vorbemerkung</a></li>
+<li><a href="#orgheadline4">2. Implementierung</a>
+<ul>
+<li><a href="#orgheadline2">2.1. Grundsätze</a></li>
+<li><a href="#orgheadline3">2.2. Programmcode</a></li>
+</ul>
+</li>
+<li><a href="#orgheadline5">3. Anwendungsbeispiele</a></li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-orgheadline1" class="outline-2">
+<h2 id="orgheadline1"><span class="section-number-2">1</span> Vorbemerkung</h2>
+<div class="outline-text-2" id="text-1">
+<p>
+Implementierung von Binärbäumen in Anlehnung an die im
+NA-Arbeitspapier Nr. <a href="https://www.nordakademie.de/fileadmin/downloads/Arbeitspapiere/AP_2008_04.pdf">2008-4</a> erläuterten Smalltalk.Implementierung.
+</p>
+
+<p>
+Es werden Binärbäume benutzt, deren 
+Einträge einer linearen Ordnung folgen und die in jedem Knoten 
+zu vermerken erlauben, wie oft ein Wert in dem Baum vorkommt. Ein Knoten des 
+Baums hat dann diesen Aufbau:
+<img src="./Knotenformat.png" alt="Knotenformat.png" />
+</p>
+
+<p>
+Die folgende Abbildung zeigt einen kleinen Baum bestehend aus Knoten dieses Formats.
+<img src="./EinBaum.png" alt="EinBaum.png" />
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgheadline4" class="outline-2">
+<h2 id="orgheadline4"><span class="section-number-2">2</span> Implementierung</h2>
+<div class="outline-text-2" id="text-2">
+</div><div id="outline-container-orgheadline2" class="outline-3">
+<h3 id="orgheadline2"><span class="section-number-3">2.1</span> Grundsätze</h3>
+<div class="outline-text-3" id="text-2-1">
+<p>
+Es gibt vier Arten von Knoten:
+</p>
+<ul class="org-ul">
+<li>Knoten mit zwei Nachfolgern</li>
+<li>Knoten mit einem linken Nachfolger</li>
+<li>Knoten mit einem rechten Nachfolger</li>
+<li>Knoten mit keinem Nachfolger</li>
+</ul>
+<p>
+Ein Beispiel:
+<img src="./EinBaumVierKnotenArten.png" alt="EinBaumVierKnotenArten.png" />
+Für jede Knotenart gibt es eine eigene Klasse.
+</p>
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">Knotenart</th>
+<th scope="col" class="org-left">Klasse</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">Knoten mit zwei Nachfolgern</td>
+<td class="org-left">Two-successors</td>
+</tr>
+
+<tr>
+<td class="org-left">Knoten mit einem linken Nachfolger</td>
+<td class="org-left">Only-left-succ</td>
+</tr>
+
+<tr>
+<td class="org-left">Knoten mit einem rechten Nachfolger</td>
+<td class="org-left">Only-right-succ</td>
+</tr>
+
+<tr>
+<td class="org-left">Knoten mit keinem Nachfolge</td>
+<td class="org-left">Leaf</td>
+</tr>
+</tbody>
+</table>
+<p>
+Das vereinfachte Klassendiagramm:
+<img src="./Bt-Klassen.png" alt="Bt-Klassen.png" />
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgheadline3" class="outline-3">
+<h3 id="orgheadline3"><span class="section-number-3">2.2</span> Programmcode</h3>
+<div class="outline-text-3" id="text-2-2">
+<div class="org-src-container">
+
+<pre class="src src-clojure"><span style="color: #707183;">(</span><span style="color: #0000FF;">ns</span> <span style="color: #6434A3;">dosl2clj.binarytree</span>
+  <span style="color: #7388D6;">(</span><span style="color: #D0372D;">:require</span> <span style="color: #909183;">[</span><span style="color: #6434A3;">dosl2clj.core</span> <span style="color: #D0372D;">:refer</span> <span style="color: #D0372D;">:all</span><span style="color: #909183;">]</span>
+            <span style="color: #909183;">[</span><span style="color: #6434A3;">serializable.fn</span> <span style="color: #D0372D;">:as</span> sf<span style="color: #909183;">]</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+
+<span style="color: #707183;">(</span><span style="color: #0000FF;">declare</span> Only-left-succ Only-right-succ Binary-tree <span style="color: #6434A3;">Leaf</span><span style="color: #707183;">)</span>
+
+<span style="color: #8D8D84;">;; </span><span style="color: #8D8D84; font-style: italic;">Klasse Node - abstrakte Oberklasse f&#252;r alle Knotenarten</span>
+<span style="color: #707183;">(</span><span style="color: #7388D6;">(</span>obj <span style="color: #909183;">{</span><span style="color: #D0372D;">:value</span> <span style="color: #D0372D;">nil</span> <span style="color: #D0372D;">:tally</span> <span style="color: #D0372D;">nil</span><span style="color: #909183;">}</span>
+      <span style="color: #909183;">{</span><span style="color: #8D8D84;">;; </span><span style="color: #8D8D84; font-style: italic;">Methode zum Hinzuf&#252;gen eines Eintrags in den Baum</span>
+       <span style="color: #D0372D;">:add</span> <span style="color: #709870;">(</span><span style="color: #0000FF;">fn</span> <span style="color: #907373;">[</span>newval is-left-from<span style="color: #907373;">]</span>
+              <span style="color: #907373;">(</span><span style="color: #0000FF;">if</span> <span style="color: #6276BA;">(</span>= <span style="color: #858580;">(</span>self <span style="color: #D0372D;">:value</span><span style="color: #858580;">)</span> newval<span style="color: #6276BA;">)</span>
+                <span style="color: #6276BA;">(</span>self <span style="color: #D0372D;">:tally</span> <span style="color: #858580;">(</span><span style="color: #006FE0;">inc</span> <span style="color: #80A880;">(</span>self <span style="color: #D0372D;">:tally</span><span style="color: #80A880;">)</span><span style="color: #858580;">)</span><span style="color: #6276BA;">)</span>
+                self<span style="color: #907373;">)</span><span style="color: #709870;">)</span>
+       <span style="color: #8D8D84;">;; </span><span style="color: #8D8D84; font-style: italic;">Methoden f&#252;r die strukturierte Anzeige eines Baums</span>
+       <span style="color: #D0372D;">:toString</span> <span style="color: #709870;">(</span><span style="color: #0000FF;">fn</span> <span style="color: #907373;">[]</span> <span style="color: #907373;">(</span>self <span style="color: #D0372D;">:toString-atLevel</span> 0<span style="color: #907373;">)</span><span style="color: #709870;">)</span>
+       <span style="color: #D0372D;">:toString-atLevel</span> <span style="color: #709870;">(</span><span style="color: #0000FF;">fn</span> <span style="color: #907373;">[</span>lvl<span style="color: #907373;">]</span> <span style="color: #907373;">(</span><span style="color: #006FE0;">str</span> <span style="color: #008000;">"\n"</span> <span style="color: #6276BA;">(</span><span style="color: #006FE0;">apply</span> str <span style="color: #858580;">(</span><span style="color: #006FE0;">repeat</span> lvl <span style="color: #008000;">"\t"</span><span style="color: #858580;">)</span><span style="color: #6276BA;">)</span>
+                                        <span style="color: #6276BA;">(</span><span style="color: #858580;">(</span>self <span style="color: #D0372D;">:class</span><span style="color: #858580;">)</span> <span style="color: #D0372D;">:class-name</span><span style="color: #6276BA;">)</span> <span style="color: #008000;">": "</span>
+                                        <span style="color: #6276BA;">(</span>self <span style="color: #D0372D;">:tally</span><span style="color: #6276BA;">)</span> <span style="color: #008000;">" mal "</span> <span style="color: #6276BA;">(</span>self <span style="color: #D0372D;">:value</span><span style="color: #6276BA;">)</span><span style="color: #907373;">)</span><span style="color: #709870;">)</span>
+       <span style="color: #D0372D;">:noNode-toString-atLevel</span> <span style="color: #709870;">(</span><span style="color: #0000FF;">fn</span> <span style="color: #907373;">[</span>lvl<span style="color: #907373;">]</span>
+                                  <span style="color: #907373;">(</span><span style="color: #006FE0;">str</span> <span style="color: #008000;">"\n"</span> <span style="color: #6276BA;">(</span><span style="color: #006FE0;">apply</span> str <span style="color: #858580;">(</span><span style="color: #006FE0;">repeat</span> lvl <span style="color: #008000;">"\t"</span><span style="color: #858580;">)</span><span style="color: #6276BA;">)</span>
+                                       <span style="color: #008000;">"---"</span><span style="color: #907373;">)</span><span style="color: #709870;">)</span>
+       <span style="color: #8D8D84;">;; </span><span style="color: #8D8D84; font-style: italic;">Methoden zur Umwanldung einses Baums in eine sortierte Liste</span>
+       <span style="color: #D0372D;">:toList</span> <span style="color: #709870;">(</span><span style="color: #0000FF;">fn</span> <span style="color: #907373;">[](</span>self <span style="color: #D0372D;">:insertInto</span> '<span style="color: #6276BA;">()</span><span style="color: #907373;">)</span><span style="color: #709870;">)</span>
+       <span style="color: #D0372D;">:insertInto</span> <span style="color: #709870;">(</span><span style="color: #0000FF;">fn</span> <span style="color: #907373;">[</span>lst<span style="color: #907373;">]</span> <span style="color: #907373;">(</span><span style="color: #006FE0;">concat</span> <span style="color: #6276BA;">(</span><span style="color: #006FE0;">repeat</span> <span style="color: #858580;">(</span>self <span style="color: #D0372D;">:tally</span><span style="color: #858580;">)</span> <span style="color: #858580;">(</span>self <span style="color: #D0372D;">:value</span><span style="color: #858580;">)</span><span style="color: #6276BA;">)</span> lst<span style="color: #907373;">)</span><span style="color: #709870;">)</span><span style="color: #909183;">}</span><span style="color: #7388D6;">)</span>
+ <span style="color: #D0372D;">:kappa</span> '<span style="color: #6434A3;">Node</span><span style="color: #707183;">)</span>
+
+<span style="color: #8D8D84;">;; </span><span style="color: #8D8D84; font-style: italic;">Klasse Two-successors</span>
+
+<span style="color: #707183;">(</span><span style="color: #7388D6;">(</span>obj <span style="color: #909183;">{</span><span style="color: #D0372D;">:left-node</span> <span style="color: #D0372D;">nil</span> <span style="color: #D0372D;">:right-node</span> <span style="color: #D0372D;">nil</span><span style="color: #909183;">}</span>
+      <span style="color: #909183;">{</span><span style="color: #8D8D84;">;; </span><span style="color: #8D8D84; font-style: italic;">Methode zum Hinzuf&#252;gen eines Eintrags in den Baum</span>
+       <span style="color: #D0372D;">:add</span> <span style="color: #709870;">(</span><span style="color: #0000FF;">fn</span> <span style="color: #907373;">[</span>newval is-left-from<span style="color: #907373;">]</span>
+              <span style="color: #907373;">(</span><span style="color: #0000FF;">let</span> <span style="color: #6276BA;">[</span>kn <span style="color: #858580;">(</span>self <span style="color: #D0372D;">:super</span> <span style="color: #D0372D;">:add</span> newval is-left-from<span style="color: #858580;">)</span><span style="color: #6276BA;">]</span>
+                <span style="color: #6276BA;">(</span><span style="color: #0000FF;">if</span> <span style="color: #858580;">(</span>= <span style="color: #80A880;">(</span>kn <span style="color: #D0372D;">:value</span><span style="color: #80A880;">)</span> newval<span style="color: #858580;">)</span>
+                  kn
+                  <span style="color: #858580;">(</span><span style="color: #0000FF;">if</span> <span style="color: #80A880;">(</span>is-left-from newval <span style="color: #887070;">(</span>kn <span style="color: #D0372D;">:value</span><span style="color: #887070;">)</span><span style="color: #80A880;">)</span>
+                    <span style="color: #80A880;">(</span>self <span style="color: #D0372D;">:left-node</span>  <span style="color: #887070;">(</span><span style="color: #707183;">(</span>self <span style="color: #D0372D;">:left-node</span><span style="color: #707183;">)</span>
+                                       <span style="color: #D0372D;">:add</span> newval is-left-from<span style="color: #887070;">)</span><span style="color: #80A880;">)</span>
+                    <span style="color: #80A880;">(</span>self <span style="color: #D0372D;">:right-node</span>  <span style="color: #887070;">(</span><span style="color: #707183;">(</span>self <span style="color: #D0372D;">:right-node</span><span style="color: #707183;">)</span>
+                                        <span style="color: #D0372D;">:add</span> newval is-left-from<span style="color: #887070;">)</span><span style="color: #80A880;">)</span><span style="color: #858580;">)</span><span style="color: #6276BA;">)</span><span style="color: #907373;">)</span><span style="color: #709870;">)</span>
+       <span style="color: #8D8D84;">;; </span><span style="color: #8D8D84; font-style: italic;">Methode f&#252;r die strukturierte Anzeige eines Baums </span>
+       <span style="color: #D0372D;">:toString-atLevel</span> <span style="color: #709870;">(</span><span style="color: #0000FF;">fn</span> <span style="color: #907373;">[</span>lvl<span style="color: #907373;">]</span>
+                           <span style="color: #907373;">(</span><span style="color: #006FE0;">str</span> <span style="color: #6276BA;">(</span>self <span style="color: #D0372D;">:super</span> <span style="color: #D0372D;">:toString-atLevel</span> lvl<span style="color: #6276BA;">)</span>
+                                <span style="color: #6276BA;">(</span><span style="color: #858580;">(</span>self <span style="color: #D0372D;">:left-node</span><span style="color: #858580;">)</span>  <span style="color: #D0372D;">:toString-atLevel</span> <span style="color: #858580;">(</span><span style="color: #006FE0;">inc</span> lvl<span style="color: #858580;">)</span><span style="color: #6276BA;">)</span>
+                                <span style="color: #6276BA;">(</span><span style="color: #858580;">(</span>self <span style="color: #D0372D;">:right-node</span><span style="color: #858580;">)</span> <span style="color: #D0372D;">:toString-atLevel</span> <span style="color: #858580;">(</span><span style="color: #006FE0;">inc</span> lvl<span style="color: #858580;">)</span><span style="color: #6276BA;">)</span><span style="color: #907373;">)</span><span style="color: #709870;">)</span>
+       <span style="color: #8D8D84;">;; </span><span style="color: #8D8D84; font-style: italic;">Methode zur Umwanldung einses Baums in eine sortierte Liste</span>
+       <span style="color: #D0372D;">:insertInto</span> <span style="color: #709870;">(</span><span style="color: #0000FF;">fn</span> <span style="color: #907373;">[</span>lst<span style="color: #907373;">]</span> 
+                     <span style="color: #907373;">(</span><span style="color: #6276BA;">(</span>self <span style="color: #D0372D;">:left-node</span><span style="color: #6276BA;">)</span> <span style="color: #D0372D;">:insertInto</span>
+                      <span style="color: #6276BA;">(</span>self <span style="color: #D0372D;">:super</span> <span style="color: #D0372D;">:insertInto</span>
+                            <span style="color: #858580;">(</span><span style="color: #80A880;">(</span>self <span style="color: #D0372D;">:right-node</span><span style="color: #80A880;">)</span> <span style="color: #D0372D;">:insertInto</span> lst<span style="color: #858580;">)</span><span style="color: #6276BA;">)</span><span style="color: #907373;">)</span><span style="color: #709870;">)</span><span style="color: #909183;">}</span><span style="color: #7388D6;">)</span>
+ <span style="color: #D0372D;">:kappa</span> 'Two-successors '<span style="color: #6434A3;">Node</span><span style="color: #707183;">)</span>
+
+<span style="color: #707183;">(</span><span style="color: #0000FF;">def</span> <span style="color: #BA36A5;">Two-successors</span>
+  <span style="color: #7388D6;">(</span>Two-successors <span style="color: #D0372D;">:add-method</span>
+                  <span style="color: #909183;">{</span><span style="color: #8D8D84;">;; </span><span style="color: #8D8D84; font-style: italic;">Klassenmethode f&#252;r das Erzeugen eines neues Exemplars</span>
+                   <span style="color: #D0372D;">:new-inst</span> <span style="color: #709870;">(</span><span style="color: #0000FF;">fn</span> <span style="color: #907373;">[</span>val tal l-node r-node<span style="color: #907373;">]</span>
+                               <span style="color: #907373;">(</span>self <span style="color: #D0372D;">:new</span>
+                                     <span style="color: #6276BA;">{</span><span style="color: #D0372D;">:value</span>  val
+                                      <span style="color: #D0372D;">:tally</span>    tal
+                                      <span style="color: #D0372D;">:left-node</span> l-node
+                                      <span style="color: #D0372D;">:right-node</span> r-node<span style="color: #6276BA;">}</span><span style="color: #907373;">)</span><span style="color: #709870;">)</span><span style="color: #909183;">}</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+
+<span style="color: #8D8D84;">;;; </span><span style="color: #8D8D84; font-style: italic;">Klasse Leaf</span>
+
+<span style="color: #707183;">(</span><span style="color: #7388D6;">(</span>obj <span style="color: #909183;">{}</span>
+      <span style="color: #909183;">{</span><span style="color: #8D8D84;">;; </span><span style="color: #8D8D84; font-style: italic;">Methode zum Hinzuf&#252;gen eines Eintrags in den Baum</span>
+       <span style="color: #D0372D;">:add</span> <span style="color: #709870;">(</span><span style="color: #0000FF;">fn</span> <span style="color: #907373;">[</span>newval is-left-from<span style="color: #907373;">]</span>
+              <span style="color: #907373;">(</span><span style="color: #0000FF;">let</span> <span style="color: #6276BA;">[</span>kn <span style="color: #858580;">(</span>self <span style="color: #D0372D;">:super</span> <span style="color: #D0372D;">:add</span> newval is-left-from<span style="color: #858580;">)</span><span style="color: #6276BA;">]</span>
+                <span style="color: #6276BA;">(</span><span style="color: #0000FF;">if</span> <span style="color: #858580;">(</span>= <span style="color: #80A880;">(</span>kn <span style="color: #D0372D;">:value</span><span style="color: #80A880;">)</span> newval<span style="color: #858580;">)</span>
+                  kn
+                  <span style="color: #858580;">(</span><span style="color: #80A880;">(</span><span style="color: #0000FF;">if</span> <span style="color: #887070;">(</span>is-left-from newval <span style="color: #707183;">(</span>kn <span style="color: #D0372D;">:value</span><span style="color: #707183;">)</span><span style="color: #887070;">)</span>
+                     Only-left-succ
+                     Only-right-succ<span style="color: #80A880;">)</span>
+                   <span style="color: #D0372D;">:new</span> <span style="color: #80A880;">{</span><span style="color: #D0372D;">:value</span> <span style="color: #887070;">(</span>kn <span style="color: #D0372D;">:value</span><span style="color: #887070;">)</span>
+                         <span style="color: #D0372D;">:tally</span> <span style="color: #887070;">(</span>kn <span style="color: #D0372D;">:tally</span><span style="color: #887070;">)</span>
+                         <span style="color: #D0372D;">:next-node</span> <span style="color: #887070;">(</span><span style="color: #6434A3;">Leaf</span> <span style="color: #D0372D;">:new</span> <span style="color: #707183;">{</span><span style="color: #D0372D;">:value</span> newval <span style="color: #D0372D;">:tally</span> 1<span style="color: #707183;">}</span><span style="color: #887070;">)</span><span style="color: #80A880;">}</span><span style="color: #858580;">)</span><span style="color: #6276BA;">)</span><span style="color: #907373;">)</span><span style="color: #709870;">)</span><span style="color: #909183;">}</span><span style="color: #7388D6;">)</span>
+ <span style="color: #D0372D;">:kappa</span> '<span style="color: #6434A3;">Leaf</span> '<span style="color: #6434A3;">Node</span><span style="color: #707183;">)</span>
+
+<span style="color: #8D8D84;">;; </span><span style="color: #8D8D84; font-style: italic;">Klasse One-successor</span>
+<span style="color: #707183;">(</span><span style="color: #7388D6;">(</span>obj <span style="color: #909183;">{</span><span style="color: #D0372D;">:next-node</span> <span style="color: #D0372D;">nil</span><span style="color: #909183;">}</span>
+      <span style="color: #909183;">{</span><span style="color: #8D8D84;">;; </span><span style="color: #8D8D84; font-style: italic;">Methode zum Hinzuf&#252;gen eines Eintrags in den Baum</span>
+       <span style="color: #D0372D;">:add-next-node</span> <span style="color: #709870;">(</span><span style="color: #0000FF;">fn</span> <span style="color: #907373;">[</span>newval is-left-from<span style="color: #907373;">]</span>
+                        <span style="color: #907373;">(</span>self <span style="color: #D0372D;">:next-node</span>  <span style="color: #6276BA;">(</span><span style="color: #858580;">(</span>self <span style="color: #D0372D;">:next-node</span><span style="color: #858580;">)</span>
+                                           <span style="color: #D0372D;">:add</span> newval is-left-from<span style="color: #6276BA;">)</span><span style="color: #907373;">)</span><span style="color: #709870;">)</span><span style="color: #909183;">}</span><span style="color: #7388D6;">)</span>
+ <span style="color: #D0372D;">:kappa</span> 'One-successor '<span style="color: #6434A3;">Node</span><span style="color: #707183;">)</span>
+
+<span style="color: #8D8D84;">;; </span><span style="color: #8D8D84; font-style: italic;">Klasse Only-left-succ</span>
+<span style="color: #707183;">(</span><span style="color: #7388D6;">(</span>obj <span style="color: #909183;">{}</span>
+      <span style="color: #909183;">{</span><span style="color: #8D8D84;">;; </span><span style="color: #8D8D84; font-style: italic;">Methode zum Hinzuf&#252;gen eines Eintrags in den Baum</span>
+       <span style="color: #D0372D;">:add</span> <span style="color: #709870;">(</span><span style="color: #0000FF;">fn</span> <span style="color: #907373;">[</span>newval is-left-from<span style="color: #907373;">]</span>
+              <span style="color: #907373;">(</span><span style="color: #0000FF;">let</span> <span style="color: #6276BA;">[</span>kn <span style="color: #858580;">(</span>self <span style="color: #D0372D;">:super</span> <span style="color: #D0372D;">:add</span> newval is-left-from<span style="color: #858580;">)</span><span style="color: #6276BA;">]</span>
+                <span style="color: #6276BA;">(</span><span style="color: #0000FF;">if</span> <span style="color: #858580;">(</span>= <span style="color: #80A880;">(</span>kn <span style="color: #D0372D;">:value</span><span style="color: #80A880;">)</span> newval<span style="color: #858580;">)</span>
+                  kn
+                  <span style="color: #858580;">(</span><span style="color: #0000FF;">if</span> <span style="color: #80A880;">(</span>is-left-from newval <span style="color: #887070;">(</span>kn <span style="color: #D0372D;">:value</span><span style="color: #887070;">)</span><span style="color: #80A880;">)</span> 
+                    <span style="color: #80A880;">(</span>self <span style="color: #D0372D;">:add-next-node</span> newval is-left-from<span style="color: #80A880;">)</span>
+                    <span style="color: #80A880;">(</span>Two-successors
+                     <span style="color: #D0372D;">:new-inst</span> <span style="color: #887070;">(</span>self <span style="color: #D0372D;">:value</span><span style="color: #887070;">)</span>
+                     <span style="color: #887070;">(</span>self <span style="color: #D0372D;">:tally</span><span style="color: #887070;">)</span>
+                     <span style="color: #887070;">(</span>self <span style="color: #D0372D;">:next-node</span><span style="color: #887070;">)</span>
+                     <span style="color: #887070;">(</span><span style="color: #6434A3;">Leaf</span> <span style="color: #D0372D;">:new</span> <span style="color: #707183;">{</span><span style="color: #D0372D;">:value</span> newval <span style="color: #D0372D;">:tally</span> 1<span style="color: #707183;">}</span><span style="color: #887070;">)</span><span style="color: #80A880;">)</span><span style="color: #858580;">)</span><span style="color: #6276BA;">)</span><span style="color: #907373;">)</span><span style="color: #709870;">)</span>
+       <span style="color: #8D8D84;">;; </span><span style="color: #8D8D84; font-style: italic;">Methode f&#252;r die strukturierte Anzeige eines Baums</span>
+       <span style="color: #D0372D;">:toString-atLevel</span> <span style="color: #709870;">(</span><span style="color: #0000FF;">fn</span> <span style="color: #907373;">[</span>lvl<span style="color: #907373;">]</span>
+                           <span style="color: #907373;">(</span><span style="color: #006FE0;">str</span> <span style="color: #6276BA;">(</span>self <span style="color: #D0372D;">:super</span> <span style="color: #D0372D;">:toString-atLevel</span> lvl<span style="color: #6276BA;">)</span>
+                                <span style="color: #6276BA;">(</span><span style="color: #858580;">(</span>self <span style="color: #D0372D;">:next-node</span><span style="color: #858580;">)</span>  <span style="color: #D0372D;">:toString-atLevel</span> <span style="color: #858580;">(</span><span style="color: #006FE0;">inc</span> lvl<span style="color: #858580;">)</span><span style="color: #6276BA;">)</span>
+                                <span style="color: #6276BA;">(</span>self <span style="color: #D0372D;">:noNode-toString-atLevel</span> <span style="color: #858580;">(</span><span style="color: #006FE0;">inc</span> lvl<span style="color: #858580;">)</span><span style="color: #6276BA;">)</span><span style="color: #907373;">)</span><span style="color: #709870;">)</span>
+       <span style="color: #8D8D84;">;; </span><span style="color: #8D8D84; font-style: italic;">Methode zur Umwanldung einses Baums in eine sortierte Liste</span>
+       <span style="color: #D0372D;">:insertInto</span> <span style="color: #709870;">(</span><span style="color: #0000FF;">fn</span> <span style="color: #907373;">[</span>lst<span style="color: #907373;">]</span>
+                     <span style="color: #907373;">(</span><span style="color: #6276BA;">(</span>self <span style="color: #D0372D;">:next-node</span><span style="color: #6276BA;">)</span> <span style="color: #D0372D;">:insertInto</span>
+                      <span style="color: #6276BA;">(</span>self <span style="color: #D0372D;">:super</span> <span style="color: #D0372D;">:insertInto</span> lst<span style="color: #6276BA;">)</span><span style="color: #907373;">)</span><span style="color: #709870;">)</span><span style="color: #909183;">}</span><span style="color: #7388D6;">)</span>
+ <span style="color: #D0372D;">:kappa</span> 'Only-left-succ 'One-successor<span style="color: #707183;">)</span>
+
+<span style="color: #8D8D84;">;; </span><span style="color: #8D8D84; font-style: italic;">Klasse Only-right-succ</span>
+<span style="color: #707183;">(</span><span style="color: #7388D6;">(</span>obj <span style="color: #909183;">{}</span>
+      <span style="color: #909183;">{</span><span style="color: #8D8D84;">;; </span><span style="color: #8D8D84; font-style: italic;">Methode zum Hinzuf&#252;gen eines Eintrags in den Baum</span>
+       <span style="color: #D0372D;">:add</span> <span style="color: #709870;">(</span><span style="color: #0000FF;">fn</span> <span style="color: #907373;">[</span>newval is-left-from<span style="color: #907373;">]</span>
+              <span style="color: #907373;">(</span><span style="color: #0000FF;">let</span> <span style="color: #6276BA;">[</span>kn <span style="color: #858580;">(</span>self <span style="color: #D0372D;">:super</span> <span style="color: #D0372D;">:add</span> newval is-left-from<span style="color: #858580;">)</span><span style="color: #6276BA;">]</span>
+                <span style="color: #6276BA;">(</span><span style="color: #0000FF;">if</span> <span style="color: #858580;">(</span>= <span style="color: #80A880;">(</span>kn <span style="color: #D0372D;">:value</span><span style="color: #80A880;">)</span> newval<span style="color: #858580;">)</span>
+                  kn
+                  <span style="color: #858580;">(</span><span style="color: #0000FF;">if</span> <span style="color: #80A880;">(</span>is-left-from newval <span style="color: #887070;">(</span>kn <span style="color: #D0372D;">:value</span><span style="color: #887070;">)</span><span style="color: #80A880;">)</span>
+                    <span style="color: #80A880;">(</span>Two-successors
+                     <span style="color: #D0372D;">:new-inst</span> <span style="color: #887070;">(</span>self <span style="color: #D0372D;">:value</span><span style="color: #887070;">)</span>
+                     <span style="color: #887070;">(</span>self <span style="color: #D0372D;">:tally</span><span style="color: #887070;">)</span>
+                     <span style="color: #887070;">(</span><span style="color: #6434A3;">Leaf</span> <span style="color: #D0372D;">:new</span> <span style="color: #707183;">{</span><span style="color: #D0372D;">:value</span> newval <span style="color: #D0372D;">:tally</span> 1<span style="color: #707183;">}</span><span style="color: #887070;">)</span>
+                     <span style="color: #887070;">(</span>self <span style="color: #D0372D;">:next-node</span><span style="color: #887070;">)</span><span style="color: #80A880;">)</span>
+                    <span style="color: #80A880;">(</span>self <span style="color: #D0372D;">:add-next-node</span> newval is-left-from<span style="color: #80A880;">)</span><span style="color: #858580;">)</span><span style="color: #6276BA;">)</span><span style="color: #907373;">)</span><span style="color: #709870;">)</span>
+       <span style="color: #8D8D84;">;; </span><span style="color: #8D8D84; font-style: italic;">Methode f&#252;r die strukturierte Anzeige eines Baums</span>
+       <span style="color: #D0372D;">:toString-atLevel</span> <span style="color: #709870;">(</span><span style="color: #0000FF;">fn</span> <span style="color: #907373;">[</span>lvl<span style="color: #907373;">]</span>
+                           <span style="color: #907373;">(</span><span style="color: #006FE0;">str</span> <span style="color: #6276BA;">(</span>self <span style="color: #D0372D;">:super</span> <span style="color: #D0372D;">:toString-atLevel</span> lvl<span style="color: #6276BA;">)</span>
+                                <span style="color: #6276BA;">(</span>self <span style="color: #D0372D;">:noNode-toString-atLevel</span> <span style="color: #858580;">(</span><span style="color: #006FE0;">inc</span> lvl<span style="color: #858580;">)</span><span style="color: #6276BA;">)</span>
+                                <span style="color: #6276BA;">(</span><span style="color: #858580;">(</span>self <span style="color: #D0372D;">:next-node</span><span style="color: #858580;">)</span> <span style="color: #D0372D;">:toString-atLevel</span> <span style="color: #858580;">(</span><span style="color: #006FE0;">inc</span> lvl<span style="color: #858580;">)</span><span style="color: #6276BA;">)</span><span style="color: #907373;">)</span><span style="color: #709870;">)</span>
+       <span style="color: #8D8D84;">;; </span><span style="color: #8D8D84; font-style: italic;">Methode zur Umwanldung einses Baums in eine sortierte Liste</span>
+       <span style="color: #D0372D;">:insertInto</span> <span style="color: #709870;">(</span><span style="color: #0000FF;">fn</span> <span style="color: #907373;">[</span>lst<span style="color: #907373;">]</span> 
+                     <span style="color: #907373;">(</span>self <span style="color: #D0372D;">:super</span> <span style="color: #D0372D;">:insertInto</span>
+                           <span style="color: #6276BA;">(</span><span style="color: #858580;">(</span>self <span style="color: #D0372D;">:next-node</span><span style="color: #858580;">)</span> <span style="color: #D0372D;">:insertInto</span> lst<span style="color: #6276BA;">)</span><span style="color: #907373;">)</span><span style="color: #709870;">)</span><span style="color: #909183;">}</span><span style="color: #7388D6;">)</span>
+ <span style="color: #D0372D;">:kappa</span> 'Only-right-succ 'One-successor<span style="color: #707183;">)</span>
+
+<span style="color: #8D8D84;">;; </span><span style="color: #8D8D84; font-style: italic;">Klasse Binary-tree</span>
+<span style="color: #707183;">(</span><span style="color: #7388D6;">(</span>obj <span style="color: #909183;">{</span><span style="color: #8D8D84;">;; </span><span style="color: #8D8D84; font-style: italic;">Wurzel des Baums</span>
+       <span style="color: #D0372D;">:root</span> <span style="color: #D0372D;">nil</span>
+       <span style="color: #8D8D84;">;; </span><span style="color: #8D8D84; font-style: italic;">Funktion, die die Baumordnung bestimmt</span>
+       <span style="color: #D0372D;">:compare</span> <span style="color: #709870;">(</span><span style="color: #0000FF;">fn</span> <span style="color: #907373;">[</span>x y<span style="color: #907373;">]</span> <span style="color: #907373;">(</span>&lt; x y<span style="color: #907373;">)</span><span style="color: #709870;">)</span><span style="color: #909183;">}</span>
+      <span style="color: #909183;">{</span><span style="color: #8D8D84;">;; </span><span style="color: #8D8D84; font-style: italic;">Methode zum Hinzuf&#252;gen eines Eintrags in den Baum</span>
+       <span style="color: #D0372D;">:add</span> <span style="color: #709870;">(</span><span style="color: #0000FF;">fn</span> <span style="color: #907373;">[</span>value<span style="color: #907373;">]</span>
+              <span style="color: #907373;">(</span><span style="color: #0000FF;">if</span> <span style="color: #6276BA;">(</span>= <span style="color: #858580;">(</span><span style="color: #006FE0;">type</span> value<span style="color: #858580;">)</span>
+                     <span style="color: #858580;">(</span><span style="color: #006FE0;">type</span> <span style="color: #80A880;">(</span><span style="color: #887070;">(</span>self <span style="color: #D0372D;">:root</span><span style="color: #887070;">)</span> <span style="color: #D0372D;">:value</span><span style="color: #80A880;">)</span><span style="color: #858580;">)</span><span style="color: #6276BA;">)</span>
+                <span style="color: #6276BA;">(</span>self <span style="color: #D0372D;">:root</span> <span style="color: #858580;">(</span><span style="color: #80A880;">(</span>self <span style="color: #D0372D;">:root</span><span style="color: #80A880;">)</span> <span style="color: #D0372D;">:add</span> value <span style="color: #80A880;">(</span>self <span style="color: #D0372D;">:compare</span><span style="color: #80A880;">)</span><span style="color: #858580;">)</span><span style="color: #6276BA;">)</span>
+                self<span style="color: #907373;">)</span><span style="color: #709870;">)</span>
+       <span style="color: #8D8D84;">;; </span><span style="color: #8D8D84; font-style: italic;">Methode f&#252;r die strukturierte Anzeige eines Baums</span>
+       <span style="color: #D0372D;">:toString</span> <span style="color: #709870;">(</span><span style="color: #0000FF;">fn</span> <span style="color: #907373;">[]</span> <span style="color: #907373;">(</span><span style="color: #006FE0;">str</span> <span style="color: #6276BA;">(</span><span style="color: #858580;">(</span>self <span style="color: #D0372D;">:class</span><span style="color: #858580;">)</span> <span style="color: #D0372D;">:class-name</span><span style="color: #6276BA;">)</span>
+                             <span style="color: #008000;">" mit \n"</span> <span style="color: #6276BA;">(</span><span style="color: #858580;">(</span>self <span style="color: #D0372D;">:root</span><span style="color: #858580;">)</span> <span style="color: #D0372D;">:toString</span><span style="color: #6276BA;">)</span><span style="color: #907373;">)</span><span style="color: #709870;">)</span>
+       <span style="color: #8D8D84;">;; </span><span style="color: #8D8D84; font-style: italic;">Methode zur Umwanldung einses Baums in eine sortierte Liste</span>
+       <span style="color: #D0372D;">:toList</span> <span style="color: #709870;">(</span><span style="color: #0000FF;">fn</span> <span style="color: #907373;">[]</span> <span style="color: #907373;">(</span><span style="color: #6276BA;">(</span>self <span style="color: #D0372D;">:root</span><span style="color: #6276BA;">)</span> <span style="color: #D0372D;">:toList</span><span style="color: #907373;">)</span><span style="color: #709870;">)</span><span style="color: #909183;">}</span><span style="color: #7388D6;">)</span>
+ <span style="color: #D0372D;">:kappa</span> 'Binary-tree<span style="color: #707183;">)</span>
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgheadline5" class="outline-2">
+<h2 id="orgheadline5"><span class="section-number-2">3</span> Anwendungsbeispiele</h2>
+<div class="outline-text-2" id="text-3">
+<div class="org-src-container">
+
+<pre class="src src-clojure"> <span style="color: #707183;">(</span><span style="color: #0000FF;">def</span> <span style="color: #BA36A5;">b0</span> <span style="color: #7388D6;">(</span>Binary-tree <span style="color: #D0372D;">:new</span> <span style="color: #909183;">{</span><span style="color: #D0372D;">:root</span> <span style="color: #709870;">(</span><span style="color: #6434A3;">Leaf</span> <span style="color: #D0372D;">:new</span> <span style="color: #907373;">{</span><span style="color: #D0372D;">:value</span> 6 <span style="color: #D0372D;">:tally</span> 1<span style="color: #907373;">}</span><span style="color: #709870;">)</span><span style="color: #909183;">}</span> <span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span><span style="color: #7388D6;">(</span>b0 <span style="color: #D0372D;">:add</span> 7<span style="color: #7388D6;">)</span> <span style="color: #D0372D;">:toString</span><span style="color: #707183;">)</span> <span style="color: #8D8D84;">;;</span><span style="color: #8D8D84; font-style: italic;">=&gt;</span>
+<span style="color: #8D8D84;">;; </span><span style="color: #8D8D84; font-style: italic;">Binary-tree mit </span>
+
+<span style="color: #8D8D84;">;; </span><span style="color: #8D8D84; font-style: italic;">Only-right-succ: 1 mal 6</span>
+<span style="color: #8D8D84;">;;      </span><span style="color: #8D8D84; font-style: italic;">---</span>
+<span style="color: #8D8D84;">;;      </span><span style="color: #8D8D84; font-style: italic;">Leaf: 1 mal 7</span>
+
+<span style="color: #707183;">(</span><span style="color: #7388D6;">(</span>b0 <span style="color: #D0372D;">:add</span> 7<span style="color: #7388D6;">)</span> <span style="color: #D0372D;">:toList</span><span style="color: #707183;">)</span>      <span style="color: #8D8D84;">;;</span><span style="color: #8D8D84; font-style: italic;">=&gt; (6 7)</span>
+<span style="color: #707183;">(</span><span style="color: #7388D6;">(</span><span style="color: #909183;">(</span><span style="color: #709870;">(</span>b0 <span style="color: #D0372D;">:add</span> 5<span style="color: #709870;">)</span> <span style="color: #D0372D;">:add</span> 3<span style="color: #909183;">)</span> <span style="color: #D0372D;">:root</span><span style="color: #7388D6;">)</span> <span style="color: #D0372D;">:toString</span><span style="color: #707183;">)</span> <span style="color: #8D8D84;">;;</span><span style="color: #8D8D84; font-style: italic;">=&gt;</span>
+<span style="color: #8D8D84;">;; </span><span style="color: #8D8D84; font-style: italic;">Only-left-succ: 1 mal 6</span>
+<span style="color: #8D8D84;">;;      </span><span style="color: #8D8D84; font-style: italic;">Only-left-succ: 1 mal 5</span>
+<span style="color: #8D8D84;">;;              </span><span style="color: #8D8D84; font-style: italic;">Leaf: 1 mal 3</span>
+<span style="color: #8D8D84;">;;              </span><span style="color: #8D8D84; font-style: italic;">---</span>
+<span style="color: #8D8D84;">;;      </span><span style="color: #8D8D84; font-style: italic;">---</span>
+<span style="color: #707183;">(</span><span style="color: #7388D6;">(</span><span style="color: #909183;">(</span>b0 <span style="color: #D0372D;">:add</span> 5<span style="color: #909183;">)</span> <span style="color: #D0372D;">:add</span> 3<span style="color: #7388D6;">)</span>  <span style="color: #D0372D;">:toList</span><span style="color: #707183;">)</span>         <span style="color: #8D8D84;">;;</span><span style="color: #8D8D84; font-style: italic;">=&gt; (3 5 6)</span>
+<span style="color: #707183;">(</span><span style="color: #7388D6;">(</span><span style="color: #909183;">(</span><span style="color: #709870;">(</span>b0 <span style="color: #D0372D;">:add</span> 7<span style="color: #709870;">)</span> <span style="color: #D0372D;">:add</span> 3<span style="color: #909183;">)</span> <span style="color: #D0372D;">:add</span> 1<span style="color: #7388D6;">)</span> <span style="color: #D0372D;">:toList</span><span style="color: #707183;">)</span> <span style="color: #8D8D84;">;;</span><span style="color: #8D8D84; font-style: italic;">=&gt; (1 3 6 7)</span>
+<span style="color: #707183;">(</span><span style="color: #0000FF;">def</span> <span style="color: #BA36A5;">b2</span> <span style="color: #7388D6;">(</span><span style="color: #909183;">(</span><span style="color: #709870;">(</span>b0 <span style="color: #D0372D;">:add</span> 10<span style="color: #709870;">)</span> <span style="color: #D0372D;">:add</span> 3<span style="color: #909183;">)</span> <span style="color: #D0372D;">:add</span> 1<span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span><span style="color: #7388D6;">(</span><span style="color: #909183;">(</span><span style="color: #709870;">(</span><span style="color: #907373;">(</span>b2 <span style="color: #D0372D;">:add</span> 9<span style="color: #907373;">)</span> <span style="color: #D0372D;">:add</span> 11<span style="color: #709870;">)</span> <span style="color: #D0372D;">:add</span> 15<span style="color: #909183;">)</span> <span style="color: #D0372D;">:add</span> 3<span style="color: #7388D6;">)</span> <span style="color: #D0372D;">:toString</span><span style="color: #707183;">)</span> <span style="color: #8D8D84;">;;</span><span style="color: #8D8D84; font-style: italic;">=&gt;</span>
+<span style="color: #8D8D84;">;; </span><span style="color: #8D8D84; font-style: italic;">Binary-tree mit </span>
+
+<span style="color: #8D8D84;">;; </span><span style="color: #8D8D84; font-style: italic;">Two-successors: 1 mal 6</span>
+<span style="color: #8D8D84;">;;      </span><span style="color: #8D8D84; font-style: italic;">Only-left-succ: 2 mal 3</span>
+<span style="color: #8D8D84;">;;              </span><span style="color: #8D8D84; font-style: italic;">Leaf: 1 mal 1</span>
+<span style="color: #8D8D84;">;;              </span><span style="color: #8D8D84; font-style: italic;">---</span>
+<span style="color: #8D8D84;">;;      </span><span style="color: #8D8D84; font-style: italic;">Two-successors: 1 mal 10</span>
+<span style="color: #8D8D84;">;;              </span><span style="color: #8D8D84; font-style: italic;">Leaf: 1 mal 9</span>
+<span style="color: #8D8D84;">;;              </span><span style="color: #8D8D84; font-style: italic;">Only-right-succ: 1 mal 11</span>
+<span style="color: #8D8D84;">;;                      </span><span style="color: #8D8D84; font-style: italic;">---</span>
+<span style="color: #8D8D84;">;;                      </span><span style="color: #8D8D84; font-style: italic;">Leaf: 1 mal 15</span>
+
+<span style="color: #707183;">(</span><span style="color: #7388D6;">(</span><span style="color: #909183;">(</span><span style="color: #709870;">(</span><span style="color: #907373;">(</span>b2 <span style="color: #D0372D;">:add</span> 9<span style="color: #907373;">)</span> <span style="color: #D0372D;">:add</span> 11<span style="color: #709870;">)</span> <span style="color: #D0372D;">:add</span> 15<span style="color: #909183;">)</span> <span style="color: #D0372D;">:add</span> 3<span style="color: #7388D6;">)</span> <span style="color: #D0372D;">:toList</span><span style="color: #707183;">)</span> <span style="color: #8D8D84;">;;</span><span style="color: #8D8D84; font-style: italic;">=&gt; (1 3 3 6 9 10 11 15)</span>
+</pre>
+</div>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="author">Autor: Johannes Brauer</p>
+<p class="email">Email: <a href="mailto:brauer@nordakademie.de">brauer@nordakademie.de</a></p>
+<p class="date">Created: 2016-07-07 Thu 10:52</p>
+<p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>
