@@ -56,7 +56,8 @@
     (-> nw
         (assoc :anzahl-spieler (count (nw :spieler-liste)))
         (assoc :spieler-reihenfolge (into [] (keys (nw :spieler-liste))))
-        (assoc :an-der-Reihe (first (keys (nw :spieler-liste)))))))
+        (assoc :an-der-Reihe (first (keys (nw :spieler-liste))))
+        (assoc :anzahl-runden 1))))
 
 ;; die Bank überweist den Teilnehmern ihr Startguthaben
 (defn verteile-startguthaben [no-welt] 
@@ -188,9 +189,11 @@
    (to-string (no-welt :spielbrett))))
 
 ;; Spielablauf
-(-> (-> nonopoly
-        (initialisiere) (verteile-startguthaben))
-    (neue-welt
-     {:naechste-welt lass-spieler-an-der-reihe-ziehen
-      :stopp-wenn spiel-beendet?})
-    (spielstand))
+(defn spielen []
+  (-> (-> nonopoly
+          (initialisiere) (verteile-startguthaben))
+      (neue-welt
+       {:naechste-welt lass-spieler-an-der-reihe-ziehen
+        :stopp-wenn spiel-beendet?}
+       spielstand))) 
+;; (spielen)
