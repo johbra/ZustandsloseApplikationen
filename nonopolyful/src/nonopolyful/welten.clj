@@ -1,40 +1,27 @@
 (ns nonopolyful.welten)
 
-(defn interaktion []
-  (println "1 Zug: z, bis zum Ende: e")
+(defn show-prompt [allowed-keys]
+  (println (apply str (interpose ", "
+                                 (map (fn [[key value]] (str value " " key))
+                                      allowed-keys)))))
+
+(defn key-pressed [allowed-keys]
+  (show-prompt allowed-keys) 
   (loop
       [i (read-line)]
-    (cond (= i "z") :ein-zug
-          (= i "e") :spiel-ablauf
-          :else (do (println "1 Zug: z, bis zum Ende: e") (recur (read-line))))))
+    (if (contains? allowed-keys i)
+      i
+      (do (show-prompt allowed-keys)
+          (recur (read-line))))))
 
-
-(defn welten-lauf [welt ereignisse render-welt]
-  (loop [w welt]
-    (cond ((ereignisse :stopp-wenn) w)
-          (do (println "Ende der Welt") (render-welt w))
-
-          :else 
-          (recur ((ereignisse :naechste-welt) w)))))
-
-(defn welten-lauf-interaktiv [welt ereignisse render-welt]
-  (loop [w welt]
-    (cond ((ereignisse :stopp-wenn) w)
-          (do (println "Ende der Welt") (render-welt w))
-
-          :else (let [wlt ((ereignisse :naechste-welt) w)]
-                  (do (println (render-welt wlt))
-                      (let [i (interaktion)]
-                        (cond
-                          (= i :ein-zug) (recur wlt)
-                          (= i :spiel-ablauf)
-                          (welten-lauf wlt ereignisse render-welt))))))))
-
-(defn neue-welt [welt ereignisse render]
+(defn big-bang [ws aktions]
   (println "Anfang der Welt")
-  (println (render welt)) 
-  (let [i (interaktion)]
-    (cond
-      (= i :ein-zug) (welten-lauf-interaktiv welt ereignisse render)
-      (= i :spiel-ablauf) (welten-lauf welt ereignisse render))))
+  (println ((:to-draw aktions) ws))
+  (loop [w ws]
+    (if (not ((:stop-when aktions) w))
+      (let [nw ((:on-key aktions) w
+                (key-pressed (:allowed-keys aktions)))]
+        (do (println ((:to-draw aktions) nw))
+            (recur nw)))
+      (println "Ende der Welt"))))
 

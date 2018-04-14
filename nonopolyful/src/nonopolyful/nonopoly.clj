@@ -28,17 +28,6 @@
    "Rosa"  (->Spieler "Rosa" feld),
    "Klara" (->Spieler "Klara" feld)})
 
-
-;; die NoNopoly-Welt
-(def nonopoly
-  {:bank nil
-   :spieler-liste ()
-   :spieler-reihenfolge [] ; Vektor mit den Spielernamen in der Würfelreihenfolge}
-   :an-der-Reihe nil ; der Spieler, der als nächster an der Reihe ist
-   :spielbrett spielbrett
-   :anzahl-runden 1
-   :anzahl-spieler 0})
-
 ;; verwandelt den Namen eines Spielers in einen Spieler
 (defn name->spieler [no-welt strng]
   ((no-welt :spieler-liste) strng))
@@ -169,6 +158,8 @@
         (setze-spiel-fort-wenn-bank-nicht-pleite sp2)
         (pruefe-geldmenge))))
 
+(defn spielen-bis-zum-ende [no-welt] nil)
+
 ;; prüft, ob nur noch ein oder kein Spieler nicht pleite ist
 (defn nur-noch-ein-spieler-zahlungsfaehig? [no-welt] 
   (<= (count (filter #(not (pleite? %)) (vals (no-welt :spieler-liste)))) 1))
@@ -189,11 +180,59 @@
    (to-string (no-welt :spielbrett))))
 
 ;; Spielablauf
-(defn spielen []
-  (-> (-> nonopoly
-          (initialisiere) (verteile-startguthaben))
-      (neue-welt
-       {:naechste-welt lass-spieler-an-der-reihe-ziehen
-        :stopp-wenn spiel-beendet?}
-       spielstand))) 
-;; (spielen)
+(defn spielen [no-welt]
+  (loop [w no-welt]
+    (if (spiel-beendet? w)
+      w
+      (recur (lass-spieler-an-der-reihe-ziehen w)))))
+
+;; Spielabbruch
+(defn abbruch [no-welt]
+  (assoc no-welt :anzahl-runden (inc *maximale-rundenanzahl*)))
+
+
+;; WorldState: data that represents the state of the world (cw)
+;; die NoNopoly-Welt
+(def nonopoly
+  {:bank nil
+   :spieler-liste ()
+   :spieler-reihenfolge [] ; Vektor mit den Spielernamen in der Würfelreihenfolge}
+   :an-der-Reihe nil ; der Spieler, der als nächster an der Reihe ist
+   :spielbrett spielbrett
+   :anzahl-runden 1
+   :anzahl-spieler 0})
+
+;; WorldState -> Image
+;; when needed, big-bang obtains the image of the current 
+;; state of the world by evaluating (render cw) 
+(defn render [cw] (spielstand cw))
+
+;; WorldState String -> WorldState 
+;; for each keystroke, big-bang obtains the next state 
+;; from (keystroke-handler cw ke);; ke represents the key
+(defn keystroke-handler [cw ke]
+  (cond
+    (= ke "z") (lass-spieler-an-der-reihe-ziehen cw)
+    (= ke "f") (spielen cw)
+    (= ke "a") (abbruch cw)))
+
+;; WorldState -> Boolean
+;; after each event, big-bang evaluates (end? cw) 
+(defn end? [cw] (spiel-beendet? cw))
+
+;; WorldState -> WorldState
+;; executes one game move
+(defn move [cw] (lass-spieler-an-der-reihe-ziehen cw))
+
+;; WorldState -> WorldState
+;; launches the program from some initial state 
+(defn main [ws]
+  (big-bang ws
+            {:on-move move
+             :to-draw render
+             :stop-when end?
+             :on-key keystroke-handler
+             :allowed-keys {"z" "1 Zug:"
+                            "f" "Spiel fortsetzen:"
+                            "a" "Spiel abbrechen:"}}))
+;; (main (-> nonopoly (initialisiere) (verteile-startguthaben)))
