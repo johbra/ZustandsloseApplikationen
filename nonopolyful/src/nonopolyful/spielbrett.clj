@@ -18,8 +18,8 @@
                 (:felder self)))))
 
 ;; gibt der immo den Namen von Spieler sp als neuen Eigentuemer
-(defn neuer-eigentuemer [self immo sp] 
-  (let [feld (s-eigentuemer immo (:name sp))]
+(defn neuer-eigentuemer [self immo sp-name] 
+  (let [feld (s-eigentuemer immo sp-name)]
     (assoc self :felder (update (:felder self ) (position immo ) (fn [_] feld)))))
 
 ;; falls sp-name Eigentuemer von feld ist, wird Bank Eigentuemer

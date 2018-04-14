@@ -10,13 +10,17 @@
 ;; Konstruktoren
 
 (defn ->Spieler [name feld]
-  {:name name :guthaben (nt 0) :pleite? false :feld feld :aktion [] :gehalts-zahlung :kein-gehalt :type :spieler})
+  {:spieler-name name :guthaben (nt 0)
+   :pleite? false
+   :feld feld :aktion []
+   :gehalts-zahlung :kein-gehalt
+   :type :spieler})
 
 (defn ->Bank [name guthaben]
   {:name name :guthaben guthaben :pleite? false :type :bank})
 
 ;; Getter
-(defn name [self] (:name self))
+(defn spieler-name [self] (:spieler-name self))
 (defn guthaben [self] (:guthaben self))
 (defn feld [self] (:feld self))
 (defn aktion [self] (:aktion self))
@@ -52,7 +56,8 @@
 (defn to-string [self]
   (let [f-map {:bank (fn [self] (println-str "Bankguthaben: "
                                              (t-to-string (:guthaben self))))
-               :spieler (fn [self] (println-str "SpielerIn " (:name self) " "
+               :spieler (fn [self] (println-str "SpielerIn "
+                                                (:spieler-name self) " "
                                                 (t-to-string (:guthaben self))
                                                 " steht auf "
                                                 (feld-name (:feld self))
@@ -81,7 +86,8 @@
   (let [sp1 (s-feld self feld) 
         spn (cond (verfuegbar feld) (s-aktion sp1 [:kaufe feld])
                   
-                  (and (verkauft feld) (not (= (eigentuemer feld) (name self))))
+                  (and (verkauft feld)
+                       (not (= (eigentuemer feld) (spieler-name self))))
                   (s-aktion sp1 [:zahle-miete feld])
 
                   :else sp1)] ;tue nichts
@@ -92,28 +98,13 @@
   (let [wuerfele (fn [] (+ 1 (rand-int 6)))
         alte-pos-nr (position (feld self))
         neue-pos-nr (mod (+ alte-pos-nr (wuerfele)) 16)]
-    (println (name self) " geht auf " (feld-name (felder neue-pos-nr)))
+    (println (spieler-name self) " geht auf " (feld-name (felder neue-pos-nr)))
     (felder neue-pos-nr)))
 
 ;; self überweist Miete für feld oder Restguthaben an empfaenger
 (defn zahle-miete [self feld empfaenger]
   (let [kb? (kann-bezahlen? self (miete feld))
         zahlbetrag (if kb? (miete feld)
-                       (do (println (name self) " ist pleite!" )(guthaben self)))
+                       (do (println (spieler-name self) " ist pleite!" )(guthaben self)))
         spz (if kb? self (s-pleite self))]
     (ueberweise spz empfaenger zahlbetrag)))
-
-
-;; Beipiele
-;; (to-string (mul (add (nt 3) (nt 4)) 5))
-
-;; (def karl (->Spieler "Karl" "feld"))
-
-;; (def bank {:name "Bank" :guthaben (nt 0) :type :bank})
-
-;; (to-string bank)
-;; (to-string karl)
-;; (to-string (nt 5))
-;; (ueberweise karl bank (nt 100))
-;; (name (->Spieler "karl" "feld"))
-;; (:type karl)
