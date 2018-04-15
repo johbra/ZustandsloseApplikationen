@@ -1,7 +1,8 @@
 (ns nonopolyful.guthaber
   (:require [nonopolyful.feld :refer :all :rename {to-string f-to-string}]
             [nonopolyful.spielbrett :refer :all :rename {to-string s-to-string}]
-            [nonopolyful.taler :refer :all :rename {to-string t-to-string}])) 
+            [nonopolyful.taler :refer :all :rename {to-string t-to-string}]
+            [nonopolyful.tracing :refer :all])) 
 
 ;;;;;;;;;;;;;
 ;; Guthaber;;
@@ -98,13 +99,13 @@
   (let [wuerfele (fn [] (+ 1 (rand-int 6)))
         alte-pos-nr (position (feld self))
         neue-pos-nr (mod (+ alte-pos-nr (wuerfele)) 16)]
-    (println (spieler-name self) " geht auf " (feld-name (felder neue-pos-nr)))
+    (move-trace (spieler-name self) " geht auf " (feld-name (felder neue-pos-nr)))
     (felder neue-pos-nr)))
 
 ;; self überweist Miete für feld oder Restguthaben an empfaenger
 (defn zahle-miete [self feld empfaenger]
   (let [kb? (kann-bezahlen? self (miete feld))
         zahlbetrag (if kb? (miete feld)
-                       (do (println (spieler-name self) " ist pleite!" )(guthaben self)))
+                       (do (move-trace (spieler-name self) " ist pleite!" )(guthaben self)))
         spz (if kb? self (s-pleite self))]
     (ueberweise spz empfaenger zahlbetrag)))
