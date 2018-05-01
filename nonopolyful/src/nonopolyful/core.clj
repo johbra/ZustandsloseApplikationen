@@ -6,7 +6,7 @@
             [nonopolyful.taler :refer :all :rename {to-string t-to-string}]
             [nonopolyful.tracing :refer :all]))
 (use 'clojure.pprint)
-(use 'clojure.tools.trace)
+;; (use 'clojure.tools.trace)
 
 ;; globale Konstanten
 (def GEHAELTER
@@ -305,4 +305,4 @@
                             "r" "Runde beenden:"
                             "f" "Spiel fortsetzen:"
                             "a" "Spiel abbrechen:"}}))
-;; (main (-> nonopoly (initialisiere) (verteile-startguthaben)))
+(defn -main [] (main (-> nonopoly (initialisiere) (verteile-startguthaben))))
