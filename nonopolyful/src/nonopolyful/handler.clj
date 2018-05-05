@@ -14,6 +14,12 @@
          (rr/response
           {:status (str (if (spiel-beendet? spiel) "Spiel beendet" "Spiel läuft")) 
            :spielstand (render spiel)})))
+  (GET "/nonopoly-spielen" []
+       (let [spiel (-> nonopoly (initialisiere) (verteile-startguthaben))
+             spiel (spielen spiel)]
+         (rr/response
+          {:status (str (if (spiel-beendet? spiel) "Spiel beendet" "Spiel läuft")) 
+           :spielstand (render spiel)})))  
   (route/not-found "Not Found"))
 
 (def app
