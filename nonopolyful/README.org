@@ -1,0 +1,48 @@
+#+TITLE: nonopolyclj
+
+* Master-Version
++ NoNopoly-Spiel mit Commandline-Bedienung.
++ Benutzung:
+  1. Ins Basisverzeichnins =nonopolyful= (/Users/johannes/Box
+     Sync/Dsl-Akademie/forschung/Vorhaben/ZustandsloseApplikationen/nonopolyful) gehen.
+  2. Im Terminalfenster
+     #+BEGIN_SRC shell
+     clj -m nonopolyful.core
+     #+END_SRC
+     eingeben.
+* Web-Version
+(gebaut nach [[https://www.safaribooksonline.com/library/view/living-clojure/9781491909270/ch07.html][Carin Meier]])
++ NoNopoly-Spiel als Server mit Web-Oberfläche
++ Benutzung:
+  1. Web-Server starten: In Terminalfenster =lein ring server=
+     eingeben; Ausgabe:
+     #+BEGIN_SRC shell
+2018-05-13 23:46:55.580:INFO:oejs.Server:jetty-7.6.13.v20130916
+2018-05-13 23:46:55.680:INFO:oejs.AbstractConnector:Started SelectChannelConnector@0.0.0.0:3000
+Started server on port 3000
+     #+END_SRC
+     TRACE-Ausgaben gehen ins Terminalfenster
+  2. Browser wird geöffnet mit  localhost:3000
+  3. in Browser Url =http://localhost:3000/nonopoly.html= eingeben
++ für Entwicklung: 
+  1. In another terminal run the following:
+     #+BEGIN_SRC shell
+lein cljsbuild auto
+     #+END_SRC
+     This command will start a process that will compile your
+     core.cljs file to JavaScript. It will continously monitor the
+     file for  changes, and recompile when it detects a change.
+  2. Browser-Connected REPL: We can attach a Clojurescript REPL to the
+     browser and be able to make the changes in the REPL happen on the
+     frontend. Using the same basic tools as before we will be able to
+     enter code into our REPL and have a web page magically update in
+     front of our eyes. This is quite exciting for experimentation and
+     rapid feedback when working with the frontend.
+ 
+     To do this, there is another cljsbuild REPL to use when we want to attach our browser to it:
+     #+BEGIN_SRC shell
+-> lein trampoline cljsbuild repl-listen
+Running ClojureScript REPL, listening on port 9000.
+To quit, type: :cljs/quit
+ClojureScript:cljs.user>
+     #+END_SRC
