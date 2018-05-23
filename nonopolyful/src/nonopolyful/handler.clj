@@ -17,15 +17,27 @@
            :spielstand (render world)
            :world (prn-str world)})))
   
-  (GET "/nonopoly-spielen" []
-       (let [world (-> nonopoly (initialisiere) (verteile-startguthaben))
-             world (spielen world)]
-         (rr/response
-          {:status (str (if (spiel-beendet? world) "Spiel beendet" "Spiel läuft"))
-           :spielstand (render world)})))
+  ;; (GET "/nonopoly-spielen" []
+  ;;      (let [world (-> nonopoly (initialisiere) (verteile-startguthaben))
+  ;;            world (spielen world)]
+  ;;        (rr/response
+  ;;         {:status (str (if (spiel-beendet? world) "Spiel beendet" "Spiel läuft"))
+  ;;          :spielstand (render world)})))
+
+  (POST "/nonopoly-Spiel-fortsetzen" req 
+        (let [world (spielen (edn/read-string (rq/body-string req)))]
+          (rr/response                                                                                              {:status (str (if (spiel-beendet? world) "Spiel beendet" "Spiel läuft"))                                  :spielstand (render world)                                                                               :world (prn-str world)})))
 
   (POST "/nonopoly-1-zug" req 
         (let [world (lass-spieler-an-der-reihe-ziehen (edn/read-string (rq/body-string req)))]
+          (rr/response                                                                                              {:status (str (if (spiel-beendet? world) "Spiel beendet" "Spiel läuft"))                                  :spielstand (render world)                                                                               :world (prn-str world)})))
+
+  (POST "/nonopoly-Runde-beenden" req 
+        (let [world (eine-runde (edn/read-string (rq/body-string req)))]
+          (rr/response                                                                                              {:status (str (if (spiel-beendet? world) "Spiel beendet" "Spiel läuft"))                                  :spielstand (render world)                                                                               :world (prn-str world)})))
+
+  (POST "/nonopoly-Spiel-abbrechen" req 
+        (let [world (abbruch (edn/read-string (rq/body-string req)))]
           (rr/response                                                                                              {:status (str (if (spiel-beendet? world) "Spiel beendet" "Spiel läuft"))                                  :spielstand (render world)                                                                               :world (prn-str world)})))
 
   (route/not-found "Not Found"))
