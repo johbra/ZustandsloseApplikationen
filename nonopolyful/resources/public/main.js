@@ -80942,218 +80942,348 @@ goog.require("cljs_http.client");
 goog.require("cljs.core.async");
 goog.require("enfocus.core");
 goog.require("enfocus.events");
+goog.require("cljs.reader");
+nonopolyful.cores.app_state = cljs.core.atom.call(null, null);
 nonopolyful.cores.spielen = function nonopolyful$cores$spielen() {
-  var c__5063__auto__ = cljs.core.async.chan.call(null, 1);
-  cljs.core.async.impl.dispatch.run.call(null, function(c__5063__auto__) {
+  var c__3819__auto__ = cljs.core.async.chan.call(null, 1);
+  cljs.core.async.impl.dispatch.run.call(null, function(c__3819__auto__) {
     return function() {
-      var f__5064__auto__ = function() {
-        var switch__5019__auto__ = function(c__5063__auto__) {
-          return function(state_7002) {
-            var state_val_7003 = state_7002[1];
-            if (state_val_7003 === 1) {
-              var inst_6989 = cljs_http.client.get.call(null, "/nonopoly-spielen");
-              var state_7002__$1 = state_7002;
-              return cljs.core.async.impl.ioc_helpers.take_BANG_.call(null, state_7002__$1, 2, inst_6989);
+      var f__3820__auto__ = function() {
+        var switch__3775__auto__ = function(c__3819__auto__) {
+          return function(state_9004) {
+            var state_val_9005 = state_9004[1];
+            if (state_val_9005 === 1) {
+              var inst_8991 = cljs_http.client.get.call(null, "/nonopoly-spielen");
+              var state_9004__$1 = state_9004;
+              return cljs.core.async.impl.ioc_helpers.take_BANG_.call(null, state_9004__$1, 2, inst_8991);
             } else {
-              if (state_val_7003 === 2) {
-                var inst_6991 = state_7002[2];
-                var inst_6992 = (new cljs.core.Keyword(null, "body", "body", -2049205669)).cljs$core$IFn$_invoke$arity$1(inst_6991);
-                var inst_6993 = (new cljs.core.Keyword(null, "status", "status", -1997798413)).cljs$core$IFn$_invoke$arity$1(inst_6992);
-                var inst_6994 = enfocus.core.content.call(null, inst_6993);
-                var inst_6995 = enfocus.core.set_style.call(null, new cljs.core.Keyword(null, "font-weight", "font-weight", 2085804583), "bold");
-                var inst_6996 = enfocus.core.do__GT_.call(null, inst_6994, inst_6995);
-                var inst_6997 = enfocus.core.at.call(null, "#status", inst_6996);
-                var inst_6998 = (new cljs.core.Keyword(null, "spielstand", "spielstand", -696449325)).cljs$core$IFn$_invoke$arity$1(inst_6992);
-                var inst_6999 = enfocus.core.content.call(null, inst_6998);
-                var inst_7000 = enfocus.core.at.call(null, "#spielstand", inst_6999);
-                var state_7002__$1 = function() {
-                  var statearr_7004 = state_7002;
-                  statearr_7004[7] = inst_6997;
-                  return statearr_7004;
+              if (state_val_9005 === 2) {
+                var inst_8993 = state_9004[2];
+                var inst_8994 = (new cljs.core.Keyword(null, "body", "body", -2049205669)).cljs$core$IFn$_invoke$arity$1(inst_8993);
+                var inst_8995 = (new cljs.core.Keyword(null, "status", "status", -1997798413)).cljs$core$IFn$_invoke$arity$1(inst_8994);
+                var inst_8996 = enfocus.core.content.call(null, inst_8995);
+                var inst_8997 = enfocus.core.set_style.call(null, new cljs.core.Keyword(null, "font-weight", "font-weight", 2085804583), "bold");
+                var inst_8998 = enfocus.core.do__GT_.call(null, inst_8996, inst_8997);
+                var inst_8999 = enfocus.core.at.call(null, "#status", inst_8998);
+                var inst_9000 = (new cljs.core.Keyword(null, "spielstand", "spielstand", -696449325)).cljs$core$IFn$_invoke$arity$1(inst_8994);
+                var inst_9001 = enfocus.core.content.call(null, inst_9000);
+                var inst_9002 = enfocus.core.at.call(null, "#spielstand", inst_9001);
+                var state_9004__$1 = function() {
+                  var statearr_9006 = state_9004;
+                  statearr_9006[7] = inst_8999;
+                  return statearr_9006;
                 }();
-                return cljs.core.async.impl.ioc_helpers.return_chan.call(null, state_7002__$1, inst_7000);
+                return cljs.core.async.impl.ioc_helpers.return_chan.call(null, state_9004__$1, inst_9002);
               } else {
                 return null;
               }
             }
           };
-        }(c__5063__auto__);
-        return function(switch__5019__auto__, c__5063__auto__) {
+        }(c__3819__auto__);
+        return function(switch__3775__auto__, c__3819__auto__) {
           return function() {
-            var nonopolyful$cores$spielen_$_state_machine__5020__auto__ = null;
-            var nonopolyful$cores$spielen_$_state_machine__5020__auto____0 = function() {
-              var statearr_7005 = [null, null, null, null, null, null, null, null];
-              statearr_7005[0] = nonopolyful$cores$spielen_$_state_machine__5020__auto__;
-              statearr_7005[1] = 1;
-              return statearr_7005;
+            var nonopolyful$cores$spielen_$_state_machine__3776__auto__ = null;
+            var nonopolyful$cores$spielen_$_state_machine__3776__auto____0 = function() {
+              var statearr_9007 = [null, null, null, null, null, null, null, null];
+              statearr_9007[0] = nonopolyful$cores$spielen_$_state_machine__3776__auto__;
+              statearr_9007[1] = 1;
+              return statearr_9007;
             };
-            var nonopolyful$cores$spielen_$_state_machine__5020__auto____1 = function(state_7002) {
+            var nonopolyful$cores$spielen_$_state_machine__3776__auto____1 = function(state_9004) {
               while (true) {
-                var ret_value__5021__auto__ = function() {
+                var ret_value__3777__auto__ = function() {
                   try {
                     while (true) {
-                      var result__5022__auto__ = switch__5019__auto__.call(null, state_7002);
-                      if (cljs.core.keyword_identical_QMARK_.call(null, result__5022__auto__, new cljs.core.Keyword(null, "recur", "recur", -437573268))) {
+                      var result__3778__auto__ = switch__3775__auto__.call(null, state_9004);
+                      if (cljs.core.keyword_identical_QMARK_.call(null, result__3778__auto__, new cljs.core.Keyword(null, "recur", "recur", -437573268))) {
                         continue;
                       } else {
-                        return result__5022__auto__;
+                        return result__3778__auto__;
                       }
                       break;
                     }
-                  } catch (e7006) {
-                    if (e7006 instanceof Object) {
-                      var ex__5023__auto__ = e7006;
-                      var statearr_7007_7009 = state_7002;
-                      statearr_7007_7009[5] = ex__5023__auto__;
-                      cljs.core.async.impl.ioc_helpers.process_exception.call(null, state_7002);
+                  } catch (e9008) {
+                    if (e9008 instanceof Object) {
+                      var ex__3779__auto__ = e9008;
+                      var statearr_9009_9011 = state_9004;
+                      statearr_9009_9011[5] = ex__3779__auto__;
+                      cljs.core.async.impl.ioc_helpers.process_exception.call(null, state_9004);
                       return new cljs.core.Keyword(null, "recur", "recur", -437573268);
                     } else {
-                      throw e7006;
+                      throw e9008;
                     }
                   }
                 }();
-                if (cljs.core.keyword_identical_QMARK_.call(null, ret_value__5021__auto__, new cljs.core.Keyword(null, "recur", "recur", -437573268))) {
-                  var G__7010 = state_7002;
-                  state_7002 = G__7010;
+                if (cljs.core.keyword_identical_QMARK_.call(null, ret_value__3777__auto__, new cljs.core.Keyword(null, "recur", "recur", -437573268))) {
+                  var G__9012 = state_9004;
+                  state_9004 = G__9012;
                   continue;
                 } else {
-                  return ret_value__5021__auto__;
+                  return ret_value__3777__auto__;
                 }
                 break;
               }
             };
-            nonopolyful$cores$spielen_$_state_machine__5020__auto__ = function(state_7002) {
+            nonopolyful$cores$spielen_$_state_machine__3776__auto__ = function(state_9004) {
               switch(arguments.length) {
                 case 0:
-                  return nonopolyful$cores$spielen_$_state_machine__5020__auto____0.call(this);
+                  return nonopolyful$cores$spielen_$_state_machine__3776__auto____0.call(this);
                 case 1:
-                  return nonopolyful$cores$spielen_$_state_machine__5020__auto____1.call(this, state_7002);
+                  return nonopolyful$cores$spielen_$_state_machine__3776__auto____1.call(this, state_9004);
               }
               throw new Error("Invalid arity: " + (arguments.length - 1));
             };
-            nonopolyful$cores$spielen_$_state_machine__5020__auto__.cljs$core$IFn$_invoke$arity$0 = nonopolyful$cores$spielen_$_state_machine__5020__auto____0;
-            nonopolyful$cores$spielen_$_state_machine__5020__auto__.cljs$core$IFn$_invoke$arity$1 = nonopolyful$cores$spielen_$_state_machine__5020__auto____1;
-            return nonopolyful$cores$spielen_$_state_machine__5020__auto__;
+            nonopolyful$cores$spielen_$_state_machine__3776__auto__.cljs$core$IFn$_invoke$arity$0 = nonopolyful$cores$spielen_$_state_machine__3776__auto____0;
+            nonopolyful$cores$spielen_$_state_machine__3776__auto__.cljs$core$IFn$_invoke$arity$1 = nonopolyful$cores$spielen_$_state_machine__3776__auto____1;
+            return nonopolyful$cores$spielen_$_state_machine__3776__auto__;
           }();
-        }(switch__5019__auto__, c__5063__auto__);
+        }(switch__3775__auto__, c__3819__auto__);
       }();
-      var state__5065__auto__ = function() {
-        var statearr_7008 = f__5064__auto__.call(null);
-        statearr_7008[6] = c__5063__auto__;
-        return statearr_7008;
+      var state__3821__auto__ = function() {
+        var statearr_9010 = f__3820__auto__.call(null);
+        statearr_9010[6] = c__3819__auto__;
+        return statearr_9010;
       }();
-      return cljs.core.async.impl.ioc_helpers.run_state_machine_wrapped.call(null, state__5065__auto__);
+      return cljs.core.async.impl.ioc_helpers.run_state_machine_wrapped.call(null, state__3821__auto__);
     };
-  }(c__5063__auto__));
-  return c__5063__auto__;
+  }(c__3819__auto__));
+  return c__3819__auto__;
 };
 nonopolyful.cores.init = function nonopolyful$cores$init() {
   clojure.browser.repl.connect.call(null, "http://localhost:9000/repl");
-  var c__5063__auto__ = cljs.core.async.chan.call(null, 1);
-  cljs.core.async.impl.dispatch.run.call(null, function(c__5063__auto__) {
+  var c__3819__auto__ = cljs.core.async.chan.call(null, 1);
+  cljs.core.async.impl.dispatch.run.call(null, function(c__3819__auto__) {
     return function() {
-      var f__5064__auto__ = function() {
-        var switch__5019__auto__ = function(c__5063__auto__) {
-          return function(state_7026) {
-            var state_val_7027 = state_7026[1];
-            if (state_val_7027 === 1) {
-              var inst_7011 = cljs_http.client.get.call(null, "/nonopoly");
-              var state_7026__$1 = state_7026;
-              return cljs.core.async.impl.ioc_helpers.take_BANG_.call(null, state_7026__$1, 2, inst_7011);
+      var f__3820__auto__ = function() {
+        var switch__3775__auto__ = function(c__3819__auto__) {
+          return function(state_9036) {
+            var state_val_9037 = state_9036[1];
+            if (state_val_9037 === 1) {
+              var inst_9013 = cljs_http.client.get.call(null, "/nonopoly");
+              var state_9036__$1 = state_9036;
+              return cljs.core.async.impl.ioc_helpers.take_BANG_.call(null, state_9036__$1, 2, inst_9013);
             } else {
-              if (state_val_7027 === 2) {
-                var inst_7013 = state_7026[2];
-                var inst_7014 = (new cljs.core.Keyword(null, "body", "body", -2049205669)).cljs$core$IFn$_invoke$arity$1(inst_7013);
-                var inst_7015 = (new cljs.core.Keyword(null, "status", "status", -1997798413)).cljs$core$IFn$_invoke$arity$1(inst_7014);
-                var inst_7016 = enfocus.core.content.call(null, inst_7015);
-                var inst_7017 = enfocus.core.set_style.call(null, new cljs.core.Keyword(null, "font-weight", "font-weight", 2085804583), "bold");
-                var inst_7018 = enfocus.core.do__GT_.call(null, inst_7016, inst_7017);
-                var inst_7019 = enfocus.core.at.call(null, "#status", inst_7018);
-                var inst_7020 = (new cljs.core.Keyword(null, "spielstand", "spielstand", -696449325)).cljs$core$IFn$_invoke$arity$1(inst_7014);
-                var inst_7021 = enfocus.core.content.call(null, inst_7020);
-                var inst_7022 = enfocus.core.at.call(null, "#spielstand", inst_7021);
-                var inst_7023 = enfocus.events.listen.call(null, new cljs.core.Keyword(null, "click", "click", 1912301393), nonopolyful.cores.spielen);
-                var inst_7024 = enfocus.core.at.call(null, "#start", inst_7023);
-                var state_7026__$1 = function() {
-                  var statearr_7028 = state_7026;
-                  statearr_7028[7] = inst_7019;
-                  statearr_7028[8] = inst_7022;
-                  return statearr_7028;
+              if (state_val_9037 === 2) {
+                var inst_9015 = state_9036[2];
+                var inst_9016 = (new cljs.core.Keyword(null, "body", "body", -2049205669)).cljs$core$IFn$_invoke$arity$1(inst_9015);
+                var inst_9017 = (new cljs.core.Keyword(null, "world", "world", -418292623)).cljs$core$IFn$_invoke$arity$1(inst_9016);
+                var inst_9018 = cljs.reader.read_string.call(null, inst_9017);
+                var inst_9019 = cljs.core.reset_BANG_.call(null, nonopolyful.cores.app_state, inst_9018);
+                var inst_9020 = (new cljs.core.Keyword(null, "status", "status", -1997798413)).cljs$core$IFn$_invoke$arity$1(inst_9016);
+                var inst_9021 = enfocus.core.content.call(null, inst_9020);
+                var inst_9022 = enfocus.core.set_style.call(null, new cljs.core.Keyword(null, "font-weight", "font-weight", 2085804583), "bold");
+                var inst_9023 = enfocus.core.do__GT_.call(null, inst_9021, inst_9022);
+                var inst_9024 = enfocus.core.at.call(null, "#status", inst_9023);
+                var inst_9025 = (new cljs.core.Keyword(null, "spielstand", "spielstand", -696449325)).cljs$core$IFn$_invoke$arity$1(inst_9016);
+                var inst_9026 = enfocus.core.content.call(null, inst_9025);
+                var inst_9027 = enfocus.core.at.call(null, "#spielstand", inst_9026);
+                var inst_9028 = enfocus.events.listen.call(null, new cljs.core.Keyword(null, "click", "click", 1912301393), nonopolyful.cores.spielen);
+                var inst_9029 = enfocus.core.at.call(null, "#start", inst_9028);
+                var inst_9030 = enfocus.events.listen.call(null, new cljs.core.Keyword(null, "click", "click", 1912301393), nonopolyful.cores.lass_spieler_an_der_reihe_ziehen);
+                var inst_9031 = enfocus.core.at.call(null, "#1-zug", inst_9030);
+                var inst_9032 = inst_9017.toString();
+                var inst_9033 = enfocus.core.content.call(null, inst_9032);
+                var inst_9034 = enfocus.core.at.call(null, "#actions", inst_9033);
+                var state_9036__$1 = function() {
+                  var statearr_9038 = state_9036;
+                  statearr_9038[7] = inst_9024;
+                  statearr_9038[8] = inst_9029;
+                  statearr_9038[9] = inst_9019;
+                  statearr_9038[10] = inst_9027;
+                  statearr_9038[11] = inst_9031;
+                  return statearr_9038;
                 }();
-                return cljs.core.async.impl.ioc_helpers.return_chan.call(null, state_7026__$1, inst_7024);
+                return cljs.core.async.impl.ioc_helpers.return_chan.call(null, state_9036__$1, inst_9034);
               } else {
                 return null;
               }
             }
           };
-        }(c__5063__auto__);
-        return function(switch__5019__auto__, c__5063__auto__) {
+        }(c__3819__auto__);
+        return function(switch__3775__auto__, c__3819__auto__) {
           return function() {
-            var nonopolyful$cores$init_$_state_machine__5020__auto__ = null;
-            var nonopolyful$cores$init_$_state_machine__5020__auto____0 = function() {
-              var statearr_7029 = [null, null, null, null, null, null, null, null, null];
-              statearr_7029[0] = nonopolyful$cores$init_$_state_machine__5020__auto__;
-              statearr_7029[1] = 1;
-              return statearr_7029;
+            var nonopolyful$cores$init_$_state_machine__3776__auto__ = null;
+            var nonopolyful$cores$init_$_state_machine__3776__auto____0 = function() {
+              var statearr_9039 = [null, null, null, null, null, null, null, null, null, null, null, null];
+              statearr_9039[0] = nonopolyful$cores$init_$_state_machine__3776__auto__;
+              statearr_9039[1] = 1;
+              return statearr_9039;
             };
-            var nonopolyful$cores$init_$_state_machine__5020__auto____1 = function(state_7026) {
+            var nonopolyful$cores$init_$_state_machine__3776__auto____1 = function(state_9036) {
               while (true) {
-                var ret_value__5021__auto__ = function() {
+                var ret_value__3777__auto__ = function() {
                   try {
                     while (true) {
-                      var result__5022__auto__ = switch__5019__auto__.call(null, state_7026);
-                      if (cljs.core.keyword_identical_QMARK_.call(null, result__5022__auto__, new cljs.core.Keyword(null, "recur", "recur", -437573268))) {
+                      var result__3778__auto__ = switch__3775__auto__.call(null, state_9036);
+                      if (cljs.core.keyword_identical_QMARK_.call(null, result__3778__auto__, new cljs.core.Keyword(null, "recur", "recur", -437573268))) {
                         continue;
                       } else {
-                        return result__5022__auto__;
+                        return result__3778__auto__;
                       }
                       break;
                     }
-                  } catch (e7030) {
-                    if (e7030 instanceof Object) {
-                      var ex__5023__auto__ = e7030;
-                      var statearr_7031_7033 = state_7026;
-                      statearr_7031_7033[5] = ex__5023__auto__;
-                      cljs.core.async.impl.ioc_helpers.process_exception.call(null, state_7026);
+                  } catch (e9040) {
+                    if (e9040 instanceof Object) {
+                      var ex__3779__auto__ = e9040;
+                      var statearr_9041_9043 = state_9036;
+                      statearr_9041_9043[5] = ex__3779__auto__;
+                      cljs.core.async.impl.ioc_helpers.process_exception.call(null, state_9036);
                       return new cljs.core.Keyword(null, "recur", "recur", -437573268);
                     } else {
-                      throw e7030;
+                      throw e9040;
                     }
                   }
                 }();
-                if (cljs.core.keyword_identical_QMARK_.call(null, ret_value__5021__auto__, new cljs.core.Keyword(null, "recur", "recur", -437573268))) {
-                  var G__7034 = state_7026;
-                  state_7026 = G__7034;
+                if (cljs.core.keyword_identical_QMARK_.call(null, ret_value__3777__auto__, new cljs.core.Keyword(null, "recur", "recur", -437573268))) {
+                  var G__9044 = state_9036;
+                  state_9036 = G__9044;
                   continue;
                 } else {
-                  return ret_value__5021__auto__;
+                  return ret_value__3777__auto__;
                 }
                 break;
               }
             };
-            nonopolyful$cores$init_$_state_machine__5020__auto__ = function(state_7026) {
+            nonopolyful$cores$init_$_state_machine__3776__auto__ = function(state_9036) {
               switch(arguments.length) {
                 case 0:
-                  return nonopolyful$cores$init_$_state_machine__5020__auto____0.call(this);
+                  return nonopolyful$cores$init_$_state_machine__3776__auto____0.call(this);
                 case 1:
-                  return nonopolyful$cores$init_$_state_machine__5020__auto____1.call(this, state_7026);
+                  return nonopolyful$cores$init_$_state_machine__3776__auto____1.call(this, state_9036);
               }
               throw new Error("Invalid arity: " + (arguments.length - 1));
             };
-            nonopolyful$cores$init_$_state_machine__5020__auto__.cljs$core$IFn$_invoke$arity$0 = nonopolyful$cores$init_$_state_machine__5020__auto____0;
-            nonopolyful$cores$init_$_state_machine__5020__auto__.cljs$core$IFn$_invoke$arity$1 = nonopolyful$cores$init_$_state_machine__5020__auto____1;
-            return nonopolyful$cores$init_$_state_machine__5020__auto__;
+            nonopolyful$cores$init_$_state_machine__3776__auto__.cljs$core$IFn$_invoke$arity$0 = nonopolyful$cores$init_$_state_machine__3776__auto____0;
+            nonopolyful$cores$init_$_state_machine__3776__auto__.cljs$core$IFn$_invoke$arity$1 = nonopolyful$cores$init_$_state_machine__3776__auto____1;
+            return nonopolyful$cores$init_$_state_machine__3776__auto__;
           }();
-        }(switch__5019__auto__, c__5063__auto__);
+        }(switch__3775__auto__, c__3819__auto__);
       }();
-      var state__5065__auto__ = function() {
-        var statearr_7032 = f__5064__auto__.call(null);
-        statearr_7032[6] = c__5063__auto__;
-        return statearr_7032;
+      var state__3821__auto__ = function() {
+        var statearr_9042 = f__3820__auto__.call(null);
+        statearr_9042[6] = c__3819__auto__;
+        return statearr_9042;
       }();
-      return cljs.core.async.impl.ioc_helpers.run_state_machine_wrapped.call(null, state__5065__auto__);
+      return cljs.core.async.impl.ioc_helpers.run_state_machine_wrapped.call(null, state__3821__auto__);
     };
-  }(c__5063__auto__));
-  return c__5063__auto__;
+  }(c__3819__auto__));
+  return c__3819__auto__;
 };
 goog.exportSymbol("nonopolyful.cores.init", nonopolyful.cores.init);
+nonopolyful.cores.lass_spieler_an_der_reihe_ziehen = function nonopolyful$cores$lass_spieler_an_der_reihe_ziehen() {
+  var c__3819__auto__ = cljs.core.async.chan.call(null, 1);
+  cljs.core.async.impl.dispatch.run.call(null, function(c__3819__auto__) {
+    return function() {
+      var f__3820__auto__ = function() {
+        var switch__3775__auto__ = function(c__3819__auto__) {
+          return function(state_9068) {
+            var state_val_9069 = state_9068[1];
+            if (state_val_9069 === 1) {
+              var inst_9045 = [new cljs.core.Keyword(null, "edn-params", "edn-params", 894273052)];
+              var inst_9046 = cljs.core.deref.call(null, nonopolyful.cores.app_state);
+              var inst_9047 = [inst_9046];
+              var inst_9048 = cljs.core.PersistentHashMap.fromArrays(inst_9045, inst_9047);
+              var inst_9049 = cljs_http.client.post.call(null, "/nonopoly-1-zug", inst_9048);
+              var state_9068__$1 = state_9068;
+              return cljs.core.async.impl.ioc_helpers.take_BANG_.call(null, state_9068__$1, 2, inst_9049);
+            } else {
+              if (state_val_9069 === 2) {
+                var inst_9051 = state_9068[2];
+                var inst_9052 = (new cljs.core.Keyword(null, "body", "body", -2049205669)).cljs$core$IFn$_invoke$arity$1(inst_9051);
+                var inst_9053 = (new cljs.core.Keyword(null, "world", "world", -418292623)).cljs$core$IFn$_invoke$arity$1(inst_9052);
+                var inst_9054 = (new cljs.core.Keyword(null, "status", "status", -1997798413)).cljs$core$IFn$_invoke$arity$1(inst_9052);
+                var inst_9055 = (new cljs.core.Keyword(null, "spielstand", "spielstand", -696449325)).cljs$core$IFn$_invoke$arity$1(inst_9052);
+                var inst_9056 = cljs.reader.read_string.call(null, inst_9053);
+                var inst_9057 = cljs.core.reset_BANG_.call(null, nonopolyful.cores.app_state, inst_9056);
+                var inst_9058 = enfocus.core.content.call(null, inst_9054);
+                var inst_9059 = enfocus.core.set_style.call(null, new cljs.core.Keyword(null, "font-weight", "font-weight", 2085804583), "bold");
+                var inst_9060 = enfocus.core.do__GT_.call(null, inst_9058, inst_9059);
+                var inst_9061 = enfocus.core.at.call(null, "#status", inst_9060);
+                var inst_9062 = enfocus.core.content.call(null, inst_9055);
+                var inst_9063 = enfocus.core.at.call(null, "#spielstand", inst_9062);
+                var inst_9064 = cljs.core.prn_str.call(null, inst_9053);
+                var inst_9065 = enfocus.core.content.call(null, inst_9064);
+                var inst_9066 = enfocus.core.at.call(null, "#actions", inst_9065);
+                var state_9068__$1 = function() {
+                  var statearr_9070 = state_9068;
+                  statearr_9070[7] = inst_9061;
+                  statearr_9070[8] = inst_9063;
+                  statearr_9070[9] = inst_9057;
+                  return statearr_9070;
+                }();
+                return cljs.core.async.impl.ioc_helpers.return_chan.call(null, state_9068__$1, inst_9066);
+              } else {
+                return null;
+              }
+            }
+          };
+        }(c__3819__auto__);
+        return function(switch__3775__auto__, c__3819__auto__) {
+          return function() {
+            var nonopolyful$cores$lass_spieler_an_der_reihe_ziehen_$_state_machine__3776__auto__ = null;
+            var nonopolyful$cores$lass_spieler_an_der_reihe_ziehen_$_state_machine__3776__auto____0 = function() {
+              var statearr_9071 = [null, null, null, null, null, null, null, null, null, null];
+              statearr_9071[0] = nonopolyful$cores$lass_spieler_an_der_reihe_ziehen_$_state_machine__3776__auto__;
+              statearr_9071[1] = 1;
+              return statearr_9071;
+            };
+            var nonopolyful$cores$lass_spieler_an_der_reihe_ziehen_$_state_machine__3776__auto____1 = function(state_9068) {
+              while (true) {
+                var ret_value__3777__auto__ = function() {
+                  try {
+                    while (true) {
+                      var result__3778__auto__ = switch__3775__auto__.call(null, state_9068);
+                      if (cljs.core.keyword_identical_QMARK_.call(null, result__3778__auto__, new cljs.core.Keyword(null, "recur", "recur", -437573268))) {
+                        continue;
+                      } else {
+                        return result__3778__auto__;
+                      }
+                      break;
+                    }
+                  } catch (e9072) {
+                    if (e9072 instanceof Object) {
+                      var ex__3779__auto__ = e9072;
+                      var statearr_9073_9075 = state_9068;
+                      statearr_9073_9075[5] = ex__3779__auto__;
+                      cljs.core.async.impl.ioc_helpers.process_exception.call(null, state_9068);
+                      return new cljs.core.Keyword(null, "recur", "recur", -437573268);
+                    } else {
+                      throw e9072;
+                    }
+                  }
+                }();
+                if (cljs.core.keyword_identical_QMARK_.call(null, ret_value__3777__auto__, new cljs.core.Keyword(null, "recur", "recur", -437573268))) {
+                  var G__9076 = state_9068;
+                  state_9068 = G__9076;
+                  continue;
+                } else {
+                  return ret_value__3777__auto__;
+                }
+                break;
+              }
+            };
+            nonopolyful$cores$lass_spieler_an_der_reihe_ziehen_$_state_machine__3776__auto__ = function(state_9068) {
+              switch(arguments.length) {
+                case 0:
+                  return nonopolyful$cores$lass_spieler_an_der_reihe_ziehen_$_state_machine__3776__auto____0.call(this);
+                case 1:
+                  return nonopolyful$cores$lass_spieler_an_der_reihe_ziehen_$_state_machine__3776__auto____1.call(this, state_9068);
+              }
+              throw new Error("Invalid arity: " + (arguments.length - 1));
+            };
+            nonopolyful$cores$lass_spieler_an_der_reihe_ziehen_$_state_machine__3776__auto__.cljs$core$IFn$_invoke$arity$0 = nonopolyful$cores$lass_spieler_an_der_reihe_ziehen_$_state_machine__3776__auto____0;
+            nonopolyful$cores$lass_spieler_an_der_reihe_ziehen_$_state_machine__3776__auto__.cljs$core$IFn$_invoke$arity$1 = nonopolyful$cores$lass_spieler_an_der_reihe_ziehen_$_state_machine__3776__auto____1;
+            return nonopolyful$cores$lass_spieler_an_der_reihe_ziehen_$_state_machine__3776__auto__;
+          }();
+        }(switch__3775__auto__, c__3819__auto__);
+      }();
+      var state__3821__auto__ = function() {
+        var statearr_9074 = f__3820__auto__.call(null);
+        statearr_9074[6] = c__3819__auto__;
+        return statearr_9074;
+      }();
+      return cljs.core.async.impl.ioc_helpers.run_state_machine_wrapped.call(null, state__3821__auto__);
+    };
+  }(c__3819__auto__));
+  return c__3819__auto__;
+};
