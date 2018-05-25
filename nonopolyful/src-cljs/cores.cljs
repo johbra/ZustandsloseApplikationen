@@ -5,122 +5,49 @@
             [cljs.core.async :refer [<!]]
             [enfocus.core :as ef]
             [enfocus.events :as ev] 
-            [cljs.reader :as edn]))
+            [cljs.reader :as edn]
+            ))
 
 (def app-state (atom nil))
 
-(defn spielen []
-  (go
-    (let [response (<! (http/post "/nonopoly-Spiel-fortsetzen"{:edn-params @app-state}))
-          body (:body response)
-          world (:world body)
-          status (:status body)
-          spielstand (:spielstand body)] 
-      ;;      (js/alert (.toString world))
-      (reset! app-state (edn/read-string world))
-      (ef/at "#status" (ef/do->
-                        (ef/content status)
-                        (ef/set-style :font-weight "bold")))
-      (ef/at "#spielstand" (ef/content spielstand))
-      ;;      (js/alert spielstand)
-      ;; (ef/at "#actions" (ef/content (prn-str world)))
-      )))
+(def button-ids
+  [ "1-Zug"
+   "Runde-beenden"
+   "Spiel-fortsetzen"
+   "Spiel-abbrechen"])
 
-(defn lass-spieler-an-der-reihe-ziehen []
-  (go
-    (let [response  (<! (http/post "/nonopoly-1-zug" {:edn-params @app-state}))
-          body (:body response)
-          world (:world body)
-          status (:status body)
-          spielstand (:spielstand body)] 
-      ;;      (js/alert (.toString world))
-      (reset! app-state (edn/read-string world))
-      (ef/at "#status" (ef/do->
-                        (ef/content status)
-                        (ef/set-style :font-weight "bold")))
-      (ef/at "#spielstand" (ef/content spielstand))
-      ;;      (js/alert spielstand)
-      ;; (ef/at "#actions" (ef/content (prn-str world)))
-      )))
-
-(defn lass-spieler-an-der-reihe-ziehen []
-  (go
-    (let [response  (<! (http/post "/nonopoly-1-zug" {:edn-params @app-state}))
-          body (:body response)
-          world (:world body)
-          status (:status body)
-          spielstand (:spielstand body)] 
-      ;;      (js/alert (.toString world))
-      (reset! app-state (edn/read-string world))
-      (ef/at "#status" (ef/do->
-                        (ef/content status)
-                        (ef/set-style :font-weight "bold")))
-      (ef/at "#spielstand" (ef/content spielstand))
-      ;;      (js/alert spielstand)
-      ;; (ef/at "#actions" (ef/content (prn-str world)))
-      )))
-
-(defn eine-runde []
-  (go
-    (let [response  (<! (http/post "/nonopoly-Runde-beenden" {:edn-params @app-state}))
-          body (:body response)
-          world (:world body)
-          status (:status body)
-          spielstand (:spielstand body)] 
-      ;;      (js/alert (.toString world))
-      (reset! app-state (edn/read-string world))
-      (ef/at "#status" (ef/do->
-                        (ef/content status)
-                        (ef/set-style :font-weight "bold")))
-      (ef/at "#spielstand" (ef/content spielstand))
-      ;;      (js/alert spielstand)
-      ;; (ef/at "#actions" (ef/content (prn-str world)))
-      )))
-
-(defn abbruch []
-  (go
-    (let [response  (<! (http/post "/nonopoly-Spiel-abbrechen" {:edn-params @app-state}))
-          body (:body response)
-          world (:world body)
-          status (:status body)
-          spielstand (:spielstand body)] 
-      ;;      (js/alert (.toString world))
-      (reset! app-state (edn/read-string world))
-      (ef/at "#status" (ef/do->
-                        (ef/content status)
-                        (ef/set-style :font-weight "bold")))
-      (ef/at "#spielstand" (ef/content spielstand))
-      ;;      (js/alert spielstand)
-      ;; (ef/at "#actions" (ef/content (prn-str world)))
-      )))
+(defn request [event]
+  (let [url (-> event (.-currentTarget) (.-id))]
+    (go
+      (let [response  (<! (http/post (str "/nonopoly-" url) {:edn-params @app-state}))
+            body (:body response)
+            world (:world body)
+            status (:status body)
+            spielstand (:spielstand body)] 
+        ;;      (js/alert (.toString world))
+        (reset! app-state (edn/read-string world))
+        (ef/at "#status" (ef/do->
+                          (ef/content status)
+                          (ef/set-style :font-weight "bold")))
+        (ef/at "#spielstand" (ef/content spielstand))))))
 
 (defn ^:export init []
   (repl/connect "http://localhost:9000/repl")                
   (go
     (let [response (<! (http/get "/nonopoly"))
           body (:body response)
-          world (:world body)]
+          world (:world body)
+          actions (edn/read-string (:actions body))]
       ;;      (js/alert (.toString (:spielstand body)))
       (reset! app-state (edn/read-string world))
       (ef/at "#status" (ef/do->
                         (ef/content (:status body))
                         (ef/set-style :font-weight "bold")))
       (ef/at "#spielstand" (ef/content (:spielstand body)))
-      (ef/at "#Spiel-fortsetzen" (ev/listen
-                                  :click
-                                  spielen)) 
-      (ef/at "#1-zug" (ev/listen
-                       :click
-                       lass-spieler-an-der-reihe-ziehen))
-      (ef/at "#Runde-beenden" (ev/listen
-                               :click
-                               eine-runde))
-      (ef/at "#Spiel-abbrechen" (ev/listen
-                                 :click
-                                 abbruch))
-      ;; (ef/at "#actions" (ef/content (.toString world)))
+      ;; Event-Listener für die Aktionen definieren:
+      (doseq  [a button-ids]
+        (ef/at (str "#" a) (ev/listen :click (fn [ev] (request ev)))))
       )))
-
 
 
 

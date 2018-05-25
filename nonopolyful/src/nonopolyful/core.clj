@@ -297,15 +297,10 @@
   "executes one game move"
   [cw] (lass-spieler-an-der-reihe-ziehen cw))
 
-(def actions
-  {:on-move move
-   :to-draw render
-   :stop-when end?
-   :on-key keystroke-handler
-   :allowed-keys {"z" "1 Zug:"
-                  "r" "Runde beenden:"
-                  "f" "Spiel fortsetzen:"
-                  "a" "Spiel abbrechen:"}})
+(def actions {"1-zug" :lass-spieler-an-der-reihe-ziehen
+              "Runde-beenden" :eine-runde
+              "Spiel-fortsetzen" :spielen
+              "Spiel-abbrechen" ':abbruch})
 
 ;; WorldState -> WorldState
 (defn main

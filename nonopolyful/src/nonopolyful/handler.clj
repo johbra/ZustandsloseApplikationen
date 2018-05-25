@@ -11,24 +11,19 @@
 (defroutes app-routes
   (GET "/" [] "NoNopoly")
   (GET "/nonopoly" req []
-       (let [world (-> nonopoly (initialisiere) (verteile-startguthaben))] 
+       (let [world (-> nonopoly (initialisiere) (verteile-startguthaben))
+             actions (prn-str actions)] 
          (rr/response
           {:status (str (if (spiel-beendet? world) "Spiel beendet" "Spiel läuft")) 
            :spielstand (render world)
-           :world (prn-str world)})))
+           :world (prn-str world)
+           :actions actions})))
   
-  ;; (GET "/nonopoly-spielen" []
-  ;;      (let [world (-> nonopoly (initialisiere) (verteile-startguthaben))
-  ;;            world (spielen world)]
-  ;;        (rr/response
-  ;;         {:status (str (if (spiel-beendet? world) "Spiel beendet" "Spiel läuft"))
-  ;;          :spielstand (render world)})))
-
   (POST "/nonopoly-Spiel-fortsetzen" req 
         (let [world (spielen (edn/read-string (rq/body-string req)))]
           (rr/response                                                                                              {:status (str (if (spiel-beendet? world) "Spiel beendet" "Spiel läuft"))                                  :spielstand (render world)                                                                               :world (prn-str world)})))
 
-  (POST "/nonopoly-1-zug" req 
+  (POST "/nonopoly-1-Zug" req 
         (let [world (lass-spieler-an-der-reihe-ziehen (edn/read-string (rq/body-string req)))]
           (rr/response                                                                                              {:status (str (if (spiel-beendet? world) "Spiel beendet" "Spiel läuft"))                                  :spielstand (render world)                                                                               :world (prn-str world)})))
 
