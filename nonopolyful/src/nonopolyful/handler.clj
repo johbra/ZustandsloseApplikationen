@@ -8,34 +8,29 @@
             [ring.util.request :as rq]
             [clojure.edn :as edn]))
 
-(defroutes app-routes
-  (GET "/" [] "NoNopoly")
-  (GET "/nonopoly" req []
-       (let [world (-> nonopoly (initialisiere) (verteile-startguthaben))
-             actions (prn-str actions)] 
-         (rr/response
-          {:status (str (if (spiel-beendet? world) "Spiel beendet" "Spiel läuft")) 
-           :spielstand (render world)
-           :world (prn-str world)
-           :actions actions})))
-  
-  (POST "/nonopoly-Spiel-fortsetzen" req 
-        (let [world (spielen (edn/read-string (rq/body-string req)))]
-          (rr/response                                                                                              {:status (str (if (spiel-beendet? world) "Spiel beendet" "Spiel läuft"))                                  :spielstand (render world)                                                                               :world (prn-str world)})))
+(def button->action
+  (zipmap (map (fn [k] (str "/nonopoly-" k)) (keys actions))
+          (vals actions)))
 
-  (POST "/nonopoly-1-Zug" req 
-        (let [world (lass-spieler-an-der-reihe-ziehen (edn/read-string (rq/body-string req)))]
-          (rr/response                                                                                              {:status (str (if (spiel-beendet? world) "Spiel beendet" "Spiel läuft"))                                  :spielstand (render world)                                                                               :world (prn-str world)})))
+(defn handler [req]
+  (let [world ((button->action (second (:compojure/route req))) (edn/read-string (rq/body-string req)))]
+    (rr/response                                                                                              {:status (str (if (spiel-beendet? world) "Spiel beendet" "Spiel läuft"))                                  :spielstand (render world)                                                                               :world (prn-str world)})))
 
-  (POST "/nonopoly-Runde-beenden" req 
-        (let [world (eine-runde (edn/read-string (rq/body-string req)))]
-          (rr/response                                                                                              {:status (str (if (spiel-beendet? world) "Spiel beendet" "Spiel läuft"))                                  :spielstand (render world)                                                                               :world (prn-str world)})))
-
-  (POST "/nonopoly-Spiel-abbrechen" req 
-        (let [world (abbruch (edn/read-string (rq/body-string req)))]
-          (rr/response                                                                                              {:status (str (if (spiel-beendet? world) "Spiel beendet" "Spiel läuft"))                                  :spielstand (render world)                                                                               :world (prn-str world)})))
-
-  (route/not-found "Not Found"))
+(def app-routes
+  (routes 
+   (GET "/" [] "NoNopoly")
+   (GET "/nonopoly" req []
+        (let [world (-> nonopoly (initialisiere) (verteile-startguthaben))
+              actions (prn-str (keys actions))] 
+          (rr/response
+           {:status (str (if (spiel-beendet? world) "Spiel beendet" "Spiel läuft")) 
+            :spielstand (render world)
+            :world (prn-str world)
+            :actions actions})))
+   (POST (str "/nonopoly-" "Spiel-fortsetzen") req (handler req))
+   (apply routes
+          (map (fn [route] (make-route :post route handler)) (keys button->action)))
+   (route/not-found "Not Found")))
 
 (def app
   (-> app-routes

@@ -8,13 +8,11 @@
             [cljs.reader :as edn]
             ))
 
+;; der Weltzustand
 (def app-state (atom nil))
 
-(def button-ids
-  [ "1-Zug"
-   "Runde-beenden"
-   "Spiel-fortsetzen"
-   "Spiel-abbrechen"])
+;; die Schaltflächen
+(def button-ids (atom nil))
 
 (defn request [event]
   (let [url (-> event (.-currentTarget) (.-id))]
@@ -24,7 +22,6 @@
             world (:world body)
             status (:status body)
             spielstand (:spielstand body)] 
-        ;;      (js/alert (.toString world))
         (reset! app-state (edn/read-string world))
         (ef/at "#status" (ef/do->
                           (ef/content status)
@@ -37,15 +34,16 @@
     (let [response (<! (http/get "/nonopoly"))
           body (:body response)
           world (:world body)
-          actions (edn/read-string (:actions body))]
-      ;;      (js/alert (.toString (:spielstand body)))
+          actions (:actions body)         ]
       (reset! app-state (edn/read-string world))
+      (reset! button-ids (edn/read-string actions))
+      (js/alert (.toString @button-ids))
       (ef/at "#status" (ef/do->
                         (ef/content (:status body))
                         (ef/set-style :font-weight "bold")))
       (ef/at "#spielstand" (ef/content (:spielstand body)))
-      ;; Event-Listener für die Aktionen definieren:
-      (doseq  [a button-ids]
+      ;; Event-Listener für die Aktionen/schaltflächen definieren:
+      (doseq  [a @button-ids]
         (ef/at (str "#" a) (ev/listen :click (fn [ev] (request ev)))))
       )))
 
