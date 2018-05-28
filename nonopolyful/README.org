@@ -11,7 +11,7 @@
      #+END_SRC
      eingeben.
 * Web-Version
-(gebaut nach [[https://www.safaribooksonline.com/library/view/living-clojure/9781491909270/ch07.html][Carin Meier]])
+(gebaut nach [[https://www.safaribooksonline.com/library/view/living-clojure/9781491909270/ch07.html][Carin Meier]] u.a.)
 + NoNopoly-Spiel als Server mit Web-Oberfläche
 + Benutzung:
   1. Web-Server starten: In Terminalfenster =lein ring server=

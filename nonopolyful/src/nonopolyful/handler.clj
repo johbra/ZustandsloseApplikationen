@@ -8,28 +8,32 @@
             [ring.util.request :as rq]
             [clojure.edn :as edn]))
 
-(def button->action
-  (zipmap (map (fn [k] (str "/nonopoly-" k)) (keys actions))
-          (vals actions)))
+(def allowed-keys (actions :allowed-keys))
+(def action-urls (map (fn [k] (str "/nonopoly-" k)) (vals allowed-keys)))
 
 (defn handler [req]
-  (let [world ((button->action (second (:compojure/route req))) (edn/read-string (rq/body-string req)))]
-    (rr/response                                                                                              {:status (str (if (spiel-beendet? world) "Spiel beendet" "Spiel läuft"))                                  :spielstand (render world)                                                                               :world (prn-str world)})))
+  (let [key ((clojure.set/map-invert allowed-keys)
+             (clojure.string/replace (second (:compojure/route req)) "/nonopoly-" ""))
+        world ((actions :on-key) (edn/read-string (rq/body-string req))
+               key)]
+    (rr/response
+     {:status (str (if (spiel-beendet? world) "Spiel beendet" "Spiel läuft"))
+      :spielstand ((actions :to-draw) world)
+      :world (prn-str world)})))
 
 (def app-routes
   (routes 
    (GET "/" [] "NoNopoly")
    (GET "/nonopoly" req []
         (let [world (-> nonopoly (initialisiere) (verteile-startguthaben))
-              actions (prn-str (keys actions))] 
+              button-ids (prn-str (vals allowed-keys))] 
           (rr/response
            {:status (str (if (spiel-beendet? world) "Spiel beendet" "Spiel läuft")) 
-            :spielstand (render world)
+            :spielstand ((actions :to-draw) world)
             :world (prn-str world)
-            :actions actions})))
-   (POST (str "/nonopoly-" "Spiel-fortsetzen") req (handler req))
+            :button-ids button-ids})))
    (apply routes
-          (map (fn [route] (make-route :post route handler)) (keys button->action)))
+          (map (fn [route] (make-route :post route handler)) action-urls))
    (route/not-found "Not Found")))
 
 (def app

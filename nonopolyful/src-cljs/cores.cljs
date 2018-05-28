@@ -34,10 +34,9 @@
     (let [response (<! (http/get "/nonopoly"))
           body (:body response)
           world (:world body)
-          actions (:actions body)         ]
+          b-ids (:button-ids body)         ]
       (reset! app-state (edn/read-string world))
-      (reset! button-ids (edn/read-string actions))
-      (js/alert (.toString @button-ids))
+      (reset! button-ids (edn/read-string b-ids))
       (ef/at "#status" (ef/do->
                         (ef/content (:status body))
                         (ef/set-style :font-weight "bold")))
