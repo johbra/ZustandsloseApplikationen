@@ -96,7 +96,7 @@
 
 ;; No-Welt -> Spieler
 (defn spieler-an-der-reihe
-  "liefert den Spieler fuer den naechsten Spielzug"
+  "liefert den Spieler fuer den naechsten Spielzug" 
   [no-welt]
   ((no-welt :spieler-liste) (no-welt :an-der-Reihe)))
 
@@ -190,7 +190,7 @@
 ;; No-Welt -> No-Welt
 (defn lass-spieler-an-der-reihe-ziehen
   "führt den Spielzug eines Spieler aus "
-  [no-welt] 
+  [no-welt]
   (let [sp (spieler-an-der-reihe no-welt)
         neue-pos (neue-position sp (felder (:spielbrett no-welt)))
         sp0 (bestimme-gehaltszahlung sp neue-pos)
@@ -292,17 +292,27 @@
   "executes one game move"
   [cw] (lass-spieler-an-der-reihe-ziehen cw))
 
+;; (def actions {"1-Zug" lass-spieler-an-der-reihe-ziehen
+;;               "Runde-beenden" eine-runde
+;;               "Spiel-fortsetzen" spielen
+;;               "Spiel-abbrechen" abbruch})
+
+(def actions
+  {:on-move move
+   :to-draw render
+   :stop-when end?
+   :on-key keystroke-handler
+   :allowed-keys {"z" "1-Zug"
+                  "r" "Runde-beenden"
+                  "f" "Spiel-fortsetzen"
+                  "a" "Spiel-abbrechen"}})
+
 ;; WorldState -> WorldState
 (defn main
   "launches the program from some initial state "
   [ws]
-  (big-bang ws
-            {:on-move move
-             :to-draw render
-             :stop-when end?
-             :on-key keystroke-handler
-             :allowed-keys {"z" "1 Zug:"
-                            "r" "Runde beenden:"
-                            "f" "Spiel fortsetzen:"
-                            "a" "Spiel abbrechen:"}}))
+  (big-bang ws actions))
+
+;; Programmstart via clj:
 (defn -main [] (main (-> nonopoly (initialisiere) (verteile-startguthaben))))
+
