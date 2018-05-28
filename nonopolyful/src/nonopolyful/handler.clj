@@ -23,7 +23,7 @@
 
 (def app-routes
   (routes 
-   (GET "/" [] "NoNopoly")
+   (GET "/" [] "<h2><a href=http://localhost:3000/nonopoly.html>NoNopoly starten</a></h2>")
    (GET "/nonopoly" req []
         (let [world (-> nonopoly (initialisiere) (verteile-startguthaben))
               button-ids (prn-str (vals allowed-keys))] 
