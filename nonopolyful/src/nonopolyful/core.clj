@@ -1,11 +1,22 @@
 (ns nonopolyful.core
-  (:require [nonopolyful.feld :refer :all :rename {to-string f-to-string}]
-            [nonopolyful.guthaber :refer :all :rename {to-string g-to-string}]
-            [nonopolyful.spielbrett :refer :all]
-            [nonopolyful.welten :refer :all]
-            [nonopolyful.taler :refer :all :rename {to-string t-to-string}]
-            [nonopolyful.tracing :refer :all]))
-(use 'clojure.pprint)
+  (:require
+   [nonopolyful.feld :refer [to-string kaufpreis feld-name eigentuemer]
+    :rename {to-string f-to-string}]
+   [nonopolyful.guthaber :refer [to-string ->Spieler ->Bank spieler-name
+                                 hebe-ab schreibe-gut guthaben pleite? aktion
+                                 kauf-aktion? will-kaufen? ueberweise loesche-aktion
+                                 zahle-miete miet-zahlung? gehalt-faellig-fuer?
+                                 kann-bezahlen? gehalts-zahlung s-pleite
+                                 s-gehalts-zahlung neue-position
+                                 bestimme-gehaltszahlung gehe-auf
+                                 ]
+    :rename {to-string g-to-string}]
+   [nonopolyful.spielbrett :refer [felder spielbrett gib-zurueck-an-bank
+                                   neuer-eigentuemer to-string]]
+   [nonopolyful.welten :as wrld]
+   [nonopolyful.taler :refer [to-string nt mul add] :rename {to-string t-to-string}]
+   [nonopolyful.tracing :as trac]))
+;; (use 'clojure.pprint)
 ;; (use 'clojure.tools.trace)
 
 ;; globale Konstanten
@@ -115,7 +126,7 @@
     (if (pleite? (spieler-an-der-reihe nw))
       (der-naechste-an-der-reihe nw)
       (if (= 0 index-an-der-reihe)
-        (do (move-trace "Runde " (+ 1 (nw :anzahl-runden)) " beginnt.")
+        (do (trac/move-trace "Runde " (+ 1 (nw :anzahl-runden)) " beginnt.")
             (erhoehe-rundenzaehler nw))
         nw))))
 
@@ -135,7 +146,7 @@
   [no-welt sp immo]
   (if (will-kaufen? sp immo)
     (let [[spieler bank] (ueberweise sp (:bank no-welt) (kaufpreis immo))]
-      (move-trace  (spieler-name sp) " kauft " (feld-name immo))
+      (trac/move-trace  (spieler-name sp) " kauft " (feld-name immo))
       (-> no-welt
           (assoc :spielbrett (neuer-eigentuemer (:spielbrett no-welt)
                                                 immo
@@ -149,7 +160,7 @@
   "Spieler sp muss Miete an Eigentümer von feld zahlen"
   [no-welt sp feld]
   (let [[sp1 sp2] (zahle-miete sp feld (name->spieler no-welt (eigentuemer feld)))]
-    (move-trace (spieler-name sp) " zahlt miete an " (eigentuemer feld))
+    (trac/move-trace (spieler-name sp) " zahlt miete an " (eigentuemer feld))
     (-> no-welt
         (aktualisiere-spieler (loesche-aktion sp1 ))
         (aktualisiere-spieler sp2)
@@ -182,7 +193,8 @@
   (if (gehalt-faellig-fuer? sp)
     (let [kb? (kann-bezahlen? (no-welt :bank) (GEHAELTER (gehalts-zahlung sp)))
           zahlbetrag (if kb? (GEHAELTER (gehalts-zahlung sp))
-                         (do (move-trace "Bank ist pleite!" )(guthaben (no-welt :bank))))
+                         (do (trac/move-trace "Bank ist pleite!" )
+                             (guthaben (no-welt :bank))))
           [bank spieler] (ueberweise (no-welt :bank) sp zahlbetrag)]
       [(if kb? bank (s-pleite bank)) (s-gehalts-zahlung spieler :kein-gehalt)])
     [(no-welt :bank) sp]))
@@ -256,7 +268,7 @@
 
 ;; WorldState: data that represents the state of the world (cw)
 ;; die NoNopoly-Welt
-(def nonopoly
+(def NONOPOLY
   {:bank nil
    :spieler-liste ()
    :spieler-reihenfolge [] ; Vektor mit den Spielernamen in der Würfelreihenfolge}
@@ -297,7 +309,7 @@
 ;;               "Spiel-fortsetzen" spielen
 ;;               "Spiel-abbrechen" abbruch})
 
-(def actions
+(def ACTIONS
   {:on-move move
    :to-draw render
    :stop-when end?
@@ -311,8 +323,8 @@
 (defn main
   "launches the program from some initial state "
   [ws]
-  (big-bang ws actions))
+  (wrld/big-bang ws ACTIONS))
 
 ;; Programmstart via clj:
-(defn -main [] (main (-> nonopoly (initialisiere) (verteile-startguthaben))))
+(defn -main [] (main (-> NONOPOLY (initialisiere) (verteile-startguthaben))))
 

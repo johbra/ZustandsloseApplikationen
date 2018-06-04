@@ -1,7 +1,8 @@
 (ns nonopolyful.spielbrett
-  (:require [nonopolyful.feld :refer :all :rename {to-string f-to-string
-                                                   name f-name}]
-            [nonopolyful.taler :refer :all :rename {to-string g-to-string}]))
+  (:require [nonopolyful.feld :refer [to-string feld-name s-eigentuemer position
+                                      ->Feld ->Immo]
+             :rename {to-string f-to-string}]
+            [nonopolyful.taler :refer [to-string nt] :rename {to-string g-to-string}]))
 
 ;; Konstruktor
 
