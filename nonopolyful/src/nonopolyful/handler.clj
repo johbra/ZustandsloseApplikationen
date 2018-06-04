@@ -1,6 +1,7 @@
 (ns nonopolyful.handler
-  (:require [nonopolyful.core :refer :all]
-            [compojure.core :refer :all]
+  (:require [nonopolyful.core :refer [ACTIONS spiel-beendet? NONOPOLY
+                                      verteile-startguthaben initialisiere]]
+            [compojure.core  :refer [GET routes make-route]]
             [compojure.route :as route]
             [ring.middleware.defaults :refer [wrap-defaults site-defaults]]
             [ring.middleware.json :as ring-json]
@@ -8,28 +9,29 @@
             [ring.util.request :as rq]
             [clojure.edn :as edn]))
 
-(def allowed-keys (actions :allowed-keys))
+(def allowed-keys (ACTIONS :allowed-keys))
 (def action-urls (map (fn [k] (str "/nonopoly-" k)) (vals allowed-keys)))
 
 (defn handler [req]
   (let [key ((clojure.set/map-invert allowed-keys)
              (clojure.string/replace (second (:compojure/route req)) "/nonopoly-" ""))
-        world ((actions :on-key) (edn/read-string (rq/body-string req))
+        world ((ACTIONS :on-key) (edn/read-string (rq/body-string req))
                key)]
     (rr/response
      {:status (str (if (spiel-beendet? world) "Spiel beendet" "Spiel läuft"))
-      :spielstand ((actions :to-draw) world)
+      :spielstand ((ACTIONS :to-draw) world)
       :world (prn-str world)})))
 
 (def app-routes
   (routes 
-   (GET "/" [] "<h2><a href=http://localhost:3000/nonopoly.html>NoNopoly starten</a></h2>")
+   (GET "/" []
+        "<h2><a href=http://localhost:3000/nonopoly.html>NoNopoly starten</a></h2>")
    (GET "/nonopoly" req []
-        (let [world (-> nonopoly (initialisiere) (verteile-startguthaben))
+        (let [world (-> NONOPOLY (initialisiere) (verteile-startguthaben))
               button-ids (prn-str (vals allowed-keys))] 
           (rr/response
            {:status (str (if (spiel-beendet? world) "Spiel beendet" "Spiel läuft")) 
-            :spielstand ((actions :to-draw) world)
+            :spielstand ((ACTIONS :to-draw) world)
             :world (prn-str world)
             :button-ids button-ids})))
    (apply routes
