@@ -1,4 +1,4 @@
-(ns nonopolyful.welten)
+(ns nonopoly.welten)
 
 (defn show-prompt [allowed-keys]
   (println (apply str (interpose ", "

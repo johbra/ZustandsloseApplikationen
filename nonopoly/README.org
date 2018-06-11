@@ -1,13 +1,13 @@
-#+TITLE: nonopolyclj
+#+TITLE: nonopoly
 
 * Master-Version
 + NoNopoly-Spiel mit Commandline-Bedienung.
 + Benutzung:
   1. Ins Basisverzeichnins =nonopolyful= (/Users/johannes/Box
-     Sync/Dsl-Akademie/forschung/Vorhaben/ZustandsloseApplikationen/nonopolyful) gehen.
+     Sync/Dsl-Akademie/forschung/Vorhaben/ZustandsloseApplikationen/nonopoly) gehen.
   2. Im Terminalfenster
      #+BEGIN_SRC shell
-     clj -m nonopolyful.core
+     clj -m nonopoly.nonopoly
      #+END_SRC
      eingeben.
 * Web-Version
