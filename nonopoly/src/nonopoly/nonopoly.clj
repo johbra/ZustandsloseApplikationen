@@ -10,6 +10,6 @@
   (wrld/big-bang ws nop/ACTIONS))
 
 ;; Programmstart via clj:
-(defn -main [] (main (-> nop/nonopoly
+(defn -main [] (main (-> nop/NONOPOLY
                          (nop/initialisiere)
                          (nop/verteile-startguthaben))))
