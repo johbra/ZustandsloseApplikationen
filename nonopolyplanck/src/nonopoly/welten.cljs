@@ -1,4 +1,4 @@
-(ns nonopolyful.welten
+(ns nonopoly.welten
   (:require [clojure.string]
             [planck.core :as pio]))
 
