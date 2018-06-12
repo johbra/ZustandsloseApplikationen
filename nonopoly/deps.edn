@@ -1,2 +1,2 @@
 {:deps
- {nonopolyful {:mvn/version "0.1.0-SNAPSHOT"}}}
+ {nonopolyfulc {:mvn/version "0.1.0-SNAPSHOT"}}}

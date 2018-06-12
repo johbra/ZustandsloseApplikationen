@@ -1,0 +1,1 @@
+{:output-wrapper false, :externs ["closure-js/externs"], :libs ["closure-js/libs"], :output-to "resources/public/main.js", :optimizations :whitespace, :pretty-print true, :output-dir "target/default/cljsbuild-compiler-0"}

@@ -1,5 +1,5 @@
 (ns nonopoly.nonopoly
-  (:require [nonopolyful.core :as nop]
+  (:require [nonopolyfulc.core :as nop]
             [nonopoly.welten :as wrld]
             ))
 
