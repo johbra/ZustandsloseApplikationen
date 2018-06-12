@@ -1,0 +1,73 @@
+#+TITLE: nonopoly
+
+* Master-Version
++ NoNopoly-Spiel mit Commandline-Bedienung.
++ Benutzung:
+  1. Ins Basisverzeichnins =nonopolyful= (/Users/johannes/Box
+     Sync/Dsl-Akademie/forschung/Vorhaben/ZustandsloseApplikationen/nonopoly) gehen.
+  2. Im Terminalfenster
+     #+BEGIN_SRC shell
+     clj -m nonopoly.nonopoly
+     #+END_SRC
+     eingeben.
+* Web-Version
+(gebaut nach [[https://www.safaribooksonline.com/library/view/living-clojure/9781491909270/ch07.html][Carin Meier]] u.a.)
++ NoNopoly-Spiel als Server mit Web-Oberfläche
++ Benutzung:
+  1. Ins Verzeichnis /Users/johannes/Box Sync/Dsl-Akademie/forschung/Vorhaben/ZustandsloseApplikationen/nonopoly-server
+  2. Web-Server starten: In Terminalfenster =lein ring server=
+     eingeben; Ausgabe:
+     #+BEGIN_SRC shell
+2018-05-13 23:46:55.580:INFO:oejs.Server:jetty-7.6.13.v20130916
+2018-05-13 23:46:55.680:INFO:oejs.AbstractConnector:Started SelectChannelConnector@0.0.0.0:3000
+Started server on port 3000
+     #+END_SRC
+     TRACE-Ausgaben gehen ins Terminalfenster
+  3. Browser wird geöffnet mit  localhost:3000
+  4. in Browser Url =http://localhost:3000/nonopoly.html= eingeben
++ für Entwicklung: 
+  1. In another terminal run the following:
+     #+BEGIN_SRC shell
+lein cljsbuild auto
+     #+END_SRC
+     This command will start a process that will compile your
+     core.cljs file to JavaScript. It will continously monitor the
+     file for  changes, and recompile when it detects a change.
+  2. Browser-Connected REPL: We can attach a Clojurescript REPL to the
+     browser and be able to make the changes in the REPL happen on the
+     frontend. Using the same basic tools as before we will be able to
+     enter code into our REPL and have a web page magically update in
+     front of our eyes. This is quite exciting for experimentation and
+     rapid feedback when working with the frontend.
+ 
+     To do this, there is another cljsbuild REPL to use when we want to attach our browser to it:
+     #+BEGIN_SRC shell
+-> lein trampoline cljsbuild repl-listen
+Running ClojureScript REPL, listening on port 9000.
+To quit, type: :cljs/quit
+ClojureScript:cljs.user>
+     #+END_SRC
+** Web-Versionen
++ Die vorliegende Web-Version ist eine Client-Server-Variante mit
+  einem ziemlich dünnen Clojurescript-Client. 
+  + Darin wird nur der statische Teil der HTML-Seite definiert: Welche
+    Anzeigeelemente und welche Schaltflächen gibt es.
+  + In dem Atom =app-state= wird der Weltzustand gespeichert.
+  + Dieser wird von der Funktion =init= mit =GET= =/nonopoly= vom
+    Server initial geladen und angezeigt.
+  + Die Funktion =init= erzeugt außerdem für jeden Button einen
+    Event-Listener, der letztlich die Funktion =request= aufruft.
+  + Funktion =request= erzeugt für jeden Button ein =POST=-Request mit
+    einer individuellen URL (z. B. /nonopoly/1-Zug).
+  + Jeder Dialogschritt führt zu einem Seitenwechsel.
++ Andere mögliche Varianten von Web-Anwendungen:
+  + Der Client macht nichts, außer die vom Server gelieferten Seiten
+    anzuzeigen und bei Betätigen einer Schaltfläche oder eines Links
+    ein Request an den Server zu senden. Im Browser „läuft” nur
+    HTML. Jeder Dialogschritt führt zu einem Seitenwechsel.So arbeitet
+    auch Seaside im Basismodus.
+  + Single-page-Webanwendung: Anwendung besteht aus einer einzigen
+    HTML-Seite. Inhalte werden dynamisch nachgeladen. Die
+    NoNopoly-Anwendung könnte sogar vollständig im Browser ablaufen,
+    da die Clojure-Anwendung auch in Clojurescript lauffähig ist.
+
