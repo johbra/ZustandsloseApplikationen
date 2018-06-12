@@ -5,7 +5,7 @@
    [nonopolyref.events :as events]
    [nonopolyref.views :as views]
    [nonopolyref.config :as config]
-   [nonopolyful.core :as nop]
+   [nonopolyfulc.core :as nop]
    ))
 
 
