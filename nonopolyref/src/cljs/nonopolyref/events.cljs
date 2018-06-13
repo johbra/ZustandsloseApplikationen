@@ -2,7 +2,7 @@
   (:require
    [re-frame.core :as re-frame]
    [nonopolyref.db :as db]
-   [nonopolyful.core :as nop]))
+   [nonopolyfulc.core :as nop]))
 
 
 (re-frame/reg-event-db

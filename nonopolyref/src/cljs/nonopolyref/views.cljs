@@ -2,7 +2,7 @@
   (:require
    [re-frame.core :as re-frame]
    [nonopolyref.subs :as subs]
-   [nonopolyful.core :as nop] 
+   [nonopolyfulc.core :as nop] 
    ))
 
 (defn spielstand

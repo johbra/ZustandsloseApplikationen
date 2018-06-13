@@ -1,7 +1,7 @@
 (ns nonopolyref.subs
   (:require
    [re-frame.core :as re-frame]
-   [nonopolyful.core :as nop]))
+   [nonopolyfulc.core :as nop]))
 
 (re-frame/reg-sub
  ::name

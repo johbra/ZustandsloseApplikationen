@@ -1,5 +1,5 @@
 (ns nonopolyref.db
-  [:require [nonopolyful.core :refer [nonopoly initialisiere verteile-startguthaben]]])
+  [:require [nonopolyfulc.core :refer [NONOPOLY initialisiere verteile-startguthaben]]])
 
 (def default-db
-  (-> nonopoly (initialisiere) (verteile-startguthaben)))
+  (-> NONOPOLY (initialisiere) (verteile-startguthaben)))
