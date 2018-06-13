@@ -20,7 +20,7 @@
   )
 
 (defn schaltflaechen
-  "abgeleitet aus den in nonopolyful.core defitinierten ACTIONS"
+  "abgeleitet aus den in nonopolyfulc.core defitinierten ACTIONS"
   []
   (let [allowed-keys (nop/ACTIONS :allowed-keys)]
     (map (fn [e] 
